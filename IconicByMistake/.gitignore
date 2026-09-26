@@ -1,0 +1,8 @@
+# Excluir credenciales locales
+test/sql.properties
+
+# Archivos de compilación de NetBeans / Java
+build/
+dist/
+nbproject/private/
+*.class
