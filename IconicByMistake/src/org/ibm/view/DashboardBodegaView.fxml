@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.TilePane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: #F0F5F3;" styleClass="root" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ibm.controller.DashboardBodegaController">
+  <stylesheets>
+    <URL value="@style/dashboardbodegaview.css" />
+</stylesheets>
+
+    <top>
+        <HBox alignment="CENTER_LEFT" prefHeight="56.0" styleClass="header" BorderPane.alignment="CENTER">
+            <children>
+                <HBox alignment="CENTER_LEFT" spacing="12.0">
+                    <Circle fx:id="avatarCircle" radius="18.0" styleClass="avatar" />
+                    <VBox spacing="2.0">
+                        <Label fx:id="lblBienvenida" styleClass="header-title" text="Bienvenido">
+                     <font>
+                        <Font name="Century Gothic" size="12.0" />
+                     </font></Label>
+                        <Label fx:id="lblRol" style="-fx-font-style: Century Gothic;" styleClass="header-subtitle" text="Bodega" />
+                    </VBox>
+                </HBox>
+                <HBox alignment="CENTER_RIGHT" spacing="10.0" HBox.hgrow="ALWAYS">
+                    <Button fx:id="btnCerrarSesion" onAction="#cerrarSesion" prefHeight="32.0" prefWidth="130.0" style="-fx-background-color: #8FB5A1;" styleClass="btn-logout" text="Cerrar Sesión" textFill="WHITE">
+                  <font>
+                     <Font name="Century Gothic" size="13.0" />
+                  </font></Button>
+                </HBox>
+            </children>
+            <padding>
+                <Insets left="24.0" right="24.0" />
+            </padding>
+        </HBox>
+    </top>
+
+    <left>
+        <VBox prefHeight="561.0" prefWidth="220.0" styleClass="sidebar" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets top="16.0" />
+            </padding>
+            <children>
+                <Label styleClass="sidebar-title" text="Navegación" />
+                <Separator styleClass="sidebar-separator" />
+                <VBox prefHeight="514.0" prefWidth="238.0" spacing="2.0" VBox.vgrow="ALWAYS">
+                    <children>
+                        <Button fx:id="btnInventario" mnemonicParsing="false" onAction="#irAInventario" prefHeight="42.0" prefWidth="200.0" style="-fx-background-color: #8FB5A1;" styleClass="sidebar-button" text="   📦   Inventario" textFill="#fffefe">
+                     <font>
+                        <Font name="Century Gothic" size="13.0" />
+                     </font></Button>
+                        <Button fx:id="btnVinilo" mnemonicParsing="false" onAction="#irAVinilo" prefHeight="42.0" prefWidth="200.0" style="-fx-background-color: #8FB5A1;" styleClass="sidebar-button" text="Vinilos" textFill="WHITE">
+                     <font>
+                        <Font name="Century Gothic" size="13.0" />
+                     </font></Button>
+                        <Button fx:id="btnCatalogo" mnemonicParsing="false" onAction="#irACatalogo" prefHeight="42.0" prefWidth="200.0" style="-fx-background-color: #8FB5A1;" styleClass="sidebar-button" text="   📕   Catálogo" textFill="WHITE">
+                     <font>
+                        <Font name="Century Gothic" size="13.0" />
+                     </font></Button>
+                        <Button fx:id="btnArtista" mnemonicParsing="false" onAction="#irAArtista" prefHeight="42.0" prefWidth="200.0" style="-fx-background-color: #8FB5A1;" styleClass="sidebar-button" text="Artistas" textFill="WHITE">
+                     <font>
+                        <Font name="Century Gothic" size="13.0" />
+                     </font></Button>
+                        <Button fx:id="btnGeneros" mnemonicParsing="false" onAction="#irAGeneros" prefHeight="42.0" prefWidth="200.0" style="-fx-background-color: #8FB5A1;" styleClass="sidebar-button" text="Géneros" textFill="WHITE">
+                     <font>
+                        <Font name="Century Gothic" size="13.0" />
+                     </font></Button>
+                        <Button fx:id="btnProductores" mnemonicParsing="false" onAction="#irAProductores" prefHeight="42.0" prefWidth="200.0" style="-fx-background-color: #8FB5A1;" styleClass="sidebar-button" text="Productores" textFill="#fffafa">
+                     <font>
+                        <Font name="Century Gothic" size="13.0" />
+                     </font></Button>
+                    </children>
+                </VBox>
+                <Separator styleClass="sidebar-separator" />
+                <Label styleClass="sidebar-version" text="v1.0.0" />
+            </children>
+        </VBox>
+    </left>
+
+    <center>
+        <ScrollPane fitToHeight="true" fitToWidth="true" styleClass="scroll-pane">
+            <content>
+                <AnchorPane prefHeight="564.0" prefWidth="678.0" style="-fx-background-color: #F0F5F3;" styleClass="center-content">
+                    <children>
+                        <Label layoutX="32.0" layoutY="24.0" style="-fx-font: Century Gothic;" styleClass="section-title" text="Panel de Bodega">
+                            <font>
+                                <Font name="Century Gothic" size="22.0" />
+                            </font>
+                        </Label>
+                        <Label layoutX="32.0" layoutY="50.0" styleClass="section-subtitle" text="Inventario y gestión de catálogo">
+                     <font>
+                        <Font name="Century Gothic" size="12.0" />
+                     </font></Label>
+                        <Separator layoutX="32.0" layoutY="70.0" prefWidth="600.0" styleClass="section-separator" />
+                        <TilePane alignment="TOP_CENTER" hgap="24.0" layoutX="32.0" layoutY="90.0" prefColumns="3" prefHeight="420.0" prefWidth="616.0" vgap="24.0">
+                            <children>
+                                <VBox fx:id="cardVerInventario" onMouseClicked="#verInventario" prefHeight="160.0" prefWidth="186.0" styleClass="card">
+                                    <children>
+                                        <VBox prefHeight="123.0" prefWidth="154.0" styleClass="card-accent-info" VBox.vgrow="ALWAYS" />
+                                        <Label styleClass="card-title" text="Ver Inventario">
+                                 <font>
+                                    <Font name="Century Gothic" size="13.0" />
+                                 </font>
+                              </Label>
+                                        <Label styleClass="card-desc" text="Consultar el stock">
+                                 <font>
+                                    <Font name="Century Gothic" size="13.0" />
+                                 </font>
+                              </Label>
+                                        <Label styleClass="card-desc" text="disponible actual">
+                                 <font>
+                                    <Font name="Century Gothic" size="13.0" />
+                                 </font>
+                              </Label>
+                                    </children>
+                                    <padding>
+                                        <Insets bottom="16.0" left="16.0" right="16.0" top="0.0" />
+                                    </padding>
+                                </VBox>
+                                <VBox fx:id="cardNuevoVinilo" onMouseClicked="#nuevoVinilo" prefHeight="160.0" prefWidth="186.0" styleClass="card">
+                                    <children>
+                                        <VBox styleClass="card-accent-primary" VBox.vgrow="ALWAYS" />
+                                        <Label styleClass="card-icon" text="📖" />
+                                        <Label styleClass="card-title" text="Nuevo Vinilo">
+                                 <font>
+                                    <Font name="Century Gothic" size="13.0" />
+                                 </font></Label>
+                                        <Label styleClass="card-desc" text="Registrar un nuevo">
+                                 <font>
+                                    <Font name="Century Gothic" size="13.0" />
+                                 </font></Label>
+                                        <Label styleClass="card-desc" text="Vinilo en el sistema">
+                                 <font>
+                                    <Font name="Century Gothic" size="13.0" />
+                                 </font></Label>
+                                    </children>
+                                    <padding>
+                                        <Insets bottom="16.0" left="16.0" right="16.0" top="0.0" />
+                                    </padding>
+                                </VBox>
+                                <VBox fx:id="cardNuevoArtista" onMouseClicked="#nuevoArtista" prefHeight="160.0" prefWidth="186.0" styleClass="card">
+                                    <children>
+                                        <VBox styleClass="card-accent-primary" VBox.vgrow="ALWAYS" />
+                                        <Label styleClass="card-icon" text="✍️" />
+                                        <Label styleClass="card-title" text="Nuevo Artista" />
+                                        <Label styleClass="card-desc" text="Registrar un" />
+                                        <Label styleClass="card-desc" text="artista en el sistema" />
+                                    </children>
+                                    <padding>
+                                        <Insets bottom="16.0" left="16.0" right="16.0" top="0.0" />
+                                    </padding>
+                                </VBox>
+                                <VBox fx:id="cardNuevoGenero" onMouseClicked="#nuevoGenero" prefHeight="160.0" prefWidth="186.0" styleClass="card">
+                                    <children>
+                                        <VBox styleClass="card-accent-warning" VBox.vgrow="ALWAYS" />
+                                        <Label styleClass="card-icon" text="🏷️" />
+                                        <Label styleClass="card-title" text="Nuevo Genéro">
+                                 <font>
+                                    <Font name="Century Gothic" size="13.0" />
+                                 </font></Label>
+                                        <Label styleClass="card-desc" text="Registrar un">
+                                 <font>
+                                    <Font name="Century Gothic" size="13.0" />
+                                 </font></Label>
+                                        <Label styleClass="card-desc" text="Genéro">
+                                 <font>
+                                    <Font name="Century Gothic" size="13.0" />
+                                 </font></Label>
+                                    </children>
+                                    <padding>
+                                        <Insets bottom="16.0" left="16.0" right="16.0" top="0.0" />
+                                    </padding>
+                                </VBox>
+                                <VBox fx:id="cardNuevoProductor" onMouseClicked="#nuevoProductor" prefHeight="160.0" prefWidth="186.0" styleClass="card">
+                                    <children>
+                                        <VBox styleClass="card-accent-secondary" VBox.vgrow="ALWAYS" />
+                                        <Label styleClass="card-icon" text="🏢" />
+                                        <Label styleClass="card-title" text="Nueva Productor" />
+                                        <Label styleClass="card-desc" text="Registrar un" />
+                                        <Label styleClass="card-desc" text="productor" />
+                                    </children>
+                                    <padding>
+                                        <Insets bottom="16.0" left="16.0" right="16.0" top="0.0" />
+                                    </padding>
+                                </VBox>
+                                <VBox fx:id="cardNuevoCliente" onMouseClicked="#nuevoCliente" prefHeight="160.0" prefWidth="186.0" styleClass="card">
+                                    <padding>
+                                        <Insets bottom="16.0" left="16.0" right="16.0" top="0.0" />
+                                    </padding>
+                                </VBox>
+                            </children>
+                        </TilePane>
+                    </children>
+                </AnchorPane>
+            </content>
+        </ScrollPane>
+    </center>
+</BorderPane>

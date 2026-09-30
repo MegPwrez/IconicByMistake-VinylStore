@@ -1,6 +1,4 @@
-
 package org.ibm.dao.impl;
-
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -14,14 +12,13 @@ import org.ibm.dao.UsuarioDAO;
 import org.ibm.model.Usuario;
 import org.ibm.utils.ConexionSingleton;
 
-
 public class UsuarioDAOImpl implements UsuarioDAO {
 
     @Override
     public Usuario autenticar(String nombreUsuario, String contraseña) {
         Usuario usuario = null;
         String consulta = "{call sp_autenticarusuario(?, ?)}";
-        try (Connection conexion = ConexionSingleton.getInstancia().getConexion();
+        try (Connection conexion = ConexionSingleton.getConexion();
              CallableStatement consultaCall = conexion.prepareCall(consulta)) {
             consultaCall.setString(1, nombreUsuario);
             consultaCall.setString(2, contraseña);
@@ -46,7 +43,7 @@ public class UsuarioDAOImpl implements UsuarioDAO {
         List<Usuario> usuarios = new ArrayList<>();
         String consulta = "{call sp_listarusuarios()}";
 
-        try (Connection conexion = ConexionSingleton.getInstancia().getConexion();
+        try (Connection conexion = ConexionSingleton.getConexion();
              CallableStatement consultaCall = conexion.prepareCall(consulta);
              ResultSet rs = consultaCall.executeQuery()) {
 
@@ -72,7 +69,7 @@ public class UsuarioDAOImpl implements UsuarioDAO {
     public Usuario buscarUsuario(int idUsuario) {
         Usuario usuario = new Usuario();
         String consultaSQL = "{call sp_buscarusuario(?)}";
-        try (Connection conexion = ConexionSingleton.getInstancia().getConexion();
+        try (Connection conexion = ConexionSingleton.getConexion();
              CallableStatement consultaCall = conexion.prepareCall(consultaSQL)) {
             consultaCall.setInt(1, idUsuario);
             try (ResultSet tablaResultado = consultaCall.executeQuery()) {
@@ -96,7 +93,7 @@ public class UsuarioDAOImpl implements UsuarioDAO {
     public boolean insertar(Usuario usuario) {
         String sql = "{call sp_insertarusuario(?, ?, ?, ?, ?, ?, ?)}";
 
-        try (Connection conn = ConexionSingleton.getInstancia().getConexion();
+        try (Connection conn = ConexionSingleton.getConexion();
              CallableStatement cs = conn.prepareCall(sql)) {
 
             cs.setString(1, usuario.getNombreUsuario());
@@ -117,7 +114,7 @@ public class UsuarioDAOImpl implements UsuarioDAO {
     @Override
     public boolean actualizar(Usuario usuario) {
         String consulta = "{call sp_actualizarusuario(?, ?, ?, ?, ?, ?, ?)}";
-        try (Connection conexion = ConexionSingleton.getInstancia().getConexion();
+        try (Connection conexion = ConexionSingleton.getConexion();
              CallableStatement consultaCall = conexion.prepareCall(consulta)) {
             
             consultaCall.setInt(1, usuario.getIdUsuario());
@@ -138,7 +135,7 @@ public class UsuarioDAOImpl implements UsuarioDAO {
     @Override
     public boolean eliminar(int idUsuario) {
         String consulta = "{call sp_eliminarusuario(?)}";
-        try (Connection conexion = ConexionSingleton.getInstancia().getConexion();
+        try (Connection conexion = ConexionSingleton.getConexion();
              CallableStatement consultaCall = conexion.prepareCall(consulta)) {
             consultaCall.setInt(1, idUsuario);
             return consultaCall.executeUpdate() > 0;
@@ -151,7 +148,7 @@ public class UsuarioDAOImpl implements UsuarioDAO {
     @Override
     public boolean validarContrasenaActual(int idUsuario, String contrasenaIngresada) {
         String sql = "SELECT 1 FROM usuarios WHERE id_usuario = ? AND contrasena = SHA2(?, 256)";
-        try (Connection conn = ConexionSingleton.getInstancia().getConexion();
+        try (Connection conn = ConexionSingleton.getConexion();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, idUsuario);
             pstmt.setString(2, contrasenaIngresada);
@@ -167,7 +164,7 @@ public class UsuarioDAOImpl implements UsuarioDAO {
     @Override
     public boolean actualizarPassword(int idUsuario, String nuevaPassword) {
         String sql = "UPDATE usuarios SET contrasena = SHA2(?, 256) WHERE id_usuario = ?";
-        try (Connection conn = ConexionSingleton.getInstancia().getConexion();
+        try (Connection conn = ConexionSingleton.getConexion();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, nuevaPassword);
             pstmt.setInt(2, idUsuario);
@@ -180,6 +177,6 @@ public class UsuarioDAOImpl implements UsuarioDAO {
 
     @Override
     public Usuario autenticar(TextField txtUsuario, String passText) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet."); 
     }
 }
