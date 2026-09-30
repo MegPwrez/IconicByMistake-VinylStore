@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane id="AnchorPane" prefHeight="518.0" prefWidth="397.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ibm.controller.LoginController">
+    <stylesheets>
+        <URL value="@/org/ibm/view/style/loginview.css" />
+    </stylesheets>
+    <children>
+        <VBox alignment="CENTER" layoutY="-23.0" prefHeight="548.0" prefWidth="411.0" spacing="20.0" style="-fx-background-color: white;" AnchorPane.bottomAnchor="-7.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-7.0" AnchorPane.topAnchor="-23.0">
+            <children>
+                <Label text="Iniciar Sesión" textAlignment="CENTER" textFill="#0a0a0a">
+                    <font>
+                        <Font name="Century Gothic Bold" size="26.0" />
+                    </font>
+                    <VBox.margin>
+                        <Insets bottom="20.0" />
+                    </VBox.margin>
+                </Label>
+                <VBox maxWidth="250.0" spacing="5.0">
+                    <children>
+                        <Label text="Usuario:">
+                     <font>
+                        <Font name="Century Gothic" size="12.0" />
+                     </font>
+                  </Label>
+                        <TextField fx:id="txtUsuario" promptText="Ingrese su usuario" />
+                    </children>
+                </VBox>
+                <VBox maxWidth="250.0" spacing="5.0">
+                    <children>
+                        <Label text="Contraseña:">
+                     <font>
+                        <Font name="Century Gothic" size="12.0" />
+                     </font>
+                  </Label>
+                        <PasswordField fx:id="txtContrasena" promptText="Ingrese su contraseña" />
+                    </children>
+                </VBox>
+                <Button fx:id="btnIngresar" mnemonicParsing="false" onAction="#handleLogin" prefHeight="35.0" prefWidth="250.0" style="-fx-background-color: #8BD6A2;" text="Ingresar" textFill="#030303">
+                    <VBox.margin>
+                  <Insets top="15.0" />
+               </VBox.margin>
+                    <font>
+                  <Font name="Century Gothic Bold" size="14.0" />
+               </font>
+                </Button>
+            <Separator prefWidth="200.0" />
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>
