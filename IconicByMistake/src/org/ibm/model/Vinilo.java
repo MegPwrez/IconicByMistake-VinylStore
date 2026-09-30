@@ -3,28 +3,28 @@ package org.ibm.model;
 public class Vinilo {
     private int idVinilo;
     private String titulo;
-    private int anioLanzamiento;
+    private String anioLanzamiento; // Cambiado a String para admitir texto libre o fechas
     private double precio;
     private int stock;
     private String Sku;
+    private String urlFoto;
     
     // Relaciones
     private Artista artista;
     private Genero genero;
     private Productor productor;
 
-    // 1. CONSTRUCTOR VACÍO (¡Obligatorio para el DAO y mapeos!)
     public Vinilo() {
     }
 
-    // 2. Constructor con todos los parámetros
-    public Vinilo(int idVinilo, String titulo, int anioLanzamiento, double precio, int stock, String Sku, Artista artista, Genero genero, Productor productor) {
+    public Vinilo(int idVinilo, String titulo, String anioLanzamiento, double precio, int stock, String Sku, String urlFoto, Artista artista, Genero genero, Productor productor) {
         this.idVinilo = idVinilo;
         this.titulo = titulo;
         this.anioLanzamiento = anioLanzamiento;
         this.precio = precio;
         this.stock = stock;
         this.Sku = Sku;
+        this.urlFoto = urlFoto;
         this.artista = artista;
         this.genero = genero;
         this.productor = productor;
@@ -51,11 +51,11 @@ public class Vinilo {
         this.titulo = titulo;
     }
 
-    public int getAnioLanzamiento() {
+    public String getAnioLanzamiento() {
         return anioLanzamiento;
     }
 
-    public void setAnioLanzamiento(int anioLanzamiento) {
+    public void setAnioLanzamiento(String anioLanzamiento) {
         this.anioLanzamiento = anioLanzamiento;
     }
 
@@ -81,6 +81,14 @@ public class Vinilo {
 
     public void setSku(String Sku) {
         this.Sku = Sku;
+    }
+
+    public String getUrlFoto() {
+        return urlFoto;
+    }
+
+    public void setUrlFoto(String urlFoto) {
+        this.urlFoto = urlFoto;
     }
 
     public Artista getArtista() {

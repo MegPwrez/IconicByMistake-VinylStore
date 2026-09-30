@@ -3,15 +3,17 @@ package org.ibm.model;
 public class Artista {
     private int idArtista;
     private String nombreArtistico;
-    private String paisOrigen;
+    private String nacionalidad;
+    private String biografia;
 
     public Artista() {
     }
 
-    public Artista(int idArtista, String nombreArtistico, String paisOrigen) {
+    public Artista(int idArtista, String nombreArtistico, String nacionalidad, String biografia) {
         this.idArtista = idArtista;
         this.nombreArtistico = nombreArtistico;
-        this.paisOrigen = paisOrigen;
+        this.nacionalidad = nacionalidad;
+        this.biografia = biografia;
     }
 
     public int getIdArtista() {
@@ -30,12 +32,20 @@ public class Artista {
         this.nombreArtistico = nombreArtistico;
     }
 
-    public String getPaisOrigen() {
-        return paisOrigen;
+    public String getNacionalidad() {
+        return nacionalidad;
     }
 
-    public void setPaisOrigen(String paisOrigen) {
-        this.paisOrigen = paisOrigen;
+    public void setNacionalidad(String nacionalidad) {
+        this.nacionalidad = nacionalidad;
+    }
+
+    public String getBiografia() {
+        return biografia;
+    }
+
+    public void setBiografia(String biografia) {
+        this.biografia = biografia;
     }
 
     @Override

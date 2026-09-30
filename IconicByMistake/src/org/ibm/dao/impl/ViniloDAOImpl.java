@@ -1,158 +1,188 @@
 package org.ibm.dao.impl;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import org.ibm.dao.ViniloDAO;
+import org.ibm.utils.Conexion;
+import org.ibm.exception.DaoException;
 import org.ibm.model.Artista;
 import org.ibm.model.Genero;
 import org.ibm.model.Productor;
 import org.ibm.model.Vinilo;
-import org.ibm.utils.ConexionSingleton;
 
 public class ViniloDAOImpl implements ViniloDAO {
 
     @Override
-    public List<Vinilo> listar() {
-        List<Vinilo> listaVinilos = new ArrayList<>();
-        String sql = "SELECT v.id_vinilo, v.sku, v.titulo, v.anio_lanzamiento, v.precio, v.stock, " +
-                     "a.id_artista, a.nombre_artistico, a.pais_origen, " +
-                     "g.id_genero, g.nombre AS genero_nombre, " +
-                     "p.id_productor, p.nombre_productor, p.sello_discografico " +
-                     "FROM vinilo v " +
-                     "INNER JOIN artista a ON v.id_artista = a.id_artista " +
-                     "INNER JOIN genero g ON v.id_genero = g.id_genero " +
-                     "INNER JOIN productor p ON v.id_productor = p.id_productor";
-
-        try (Connection conn = ConexionSingleton.getConexion();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-
+    public List<Vinilo> listarTodos() {
+        List<Vinilo> lista = new ArrayList<>();
+        String sql = "{call sp_listarvinilos()}";
+        try (Connection conexion = Conexion.getInstancia().conectar();
+             CallableStatement consulta = conexion.prepareCall(sql);
+             ResultSet rs = consulta.executeQuery()) {
             while (rs.next()) {
-                listaVinilos.add(mapearVinilo(rs));
+                lista.add(mapearVinilo(rs));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DaoException("Error al listar vinilos: " + e.getMessage(), e);
         }
-        return listaVinilos;
+        return lista;
     }
 
-    @Override
-    public List<Vinilo> buscar(String criterio) {
-        List<Vinilo> listaVinilos = new ArrayList<>();
-        String sql = "SELECT v.id_vinilo, v.sku, v.titulo, v.anio_lanzamiento, v.precio, v.stock, " +
-                     "a.id_artista, a.nombre_artistico, a.pais_origen, " +
-                     "g.id_genero, g.nombre AS genero_nombre, " +
-                     "p.id_productor, p.nombre_productor, p.sello_discografico " +
-                     "FROM vinilo v " +
-                     "INNER JOIN artista a ON v.id_artista = a.id_artista " +
-                     "INNER JOIN genero g ON v.id_genero = g.id_genero " +
-                     "INNER JOIN productor p ON v.id_productor = p.id_productor " +
-                     "WHERE v.sku LIKE ? OR v.titulo LIKE ? OR a.nombre_artistico LIKE ?";
-
-        try (Connection conn = ConexionSingleton.getConexion();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
-            String parametroBusqueda = "%" + criterio + "%";
-            pstmt.setString(1, parametroBusqueda);
-            pstmt.setString(2, parametroBusqueda);
-            pstmt.setString(3, parametroBusqueda);
-
-            try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    listaVinilos.add(mapearVinilo(rs));
+    public Vinilo buscarPorId(String sku) {
+        Vinilo vinilo = null;
+        String sql = "{call sp_buscarlinilo(?)}";
+        try (Connection conexion = Conexion.getInstancia().conectar();
+             CallableStatement consulta = conexion.prepareCall(sql)) {
+            consulta.setString(1, sku);
+            try (ResultSet rs = consulta.executeQuery()) {
+                if (rs.next()) {
+                    vinilo = mapearVinilo(rs);
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DaoException("Error al buscar vinilo: " + e.getMessage(), e);
         }
-        return listaVinilos;
+        return vinilo;
     }
 
     @Override
-    public boolean insertar(Vinilo vinilo) {
-        String sql = "INSERT INTO vinilo (sku, titulo, anio_lanzamiento, precio, stock, id_artista, id_genero, id_productor) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-
-        try (Connection conn = ConexionSingleton.getConexion();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setString(1, vinilo.getSku());
-            pstmt.setString(2, vinilo.getTitulo());
-            pstmt.setInt(3, vinilo.getAnioLanzamiento());
-            pstmt.setDouble(4, vinilo.getPrecio());
-            pstmt.setInt(5, vinilo.getStock());
-            pstmt.setInt(6, vinilo.getArtista().getIdArtista());
-            pstmt.setInt(7, vinilo.getGenero().getIdGenero());
-            pstmt.setInt(8, vinilo.getProductor().getIdProductor());
-
-            return pstmt.executeUpdate() > 0;
-
+    public boolean crear(Vinilo vinilo) {
+        String sql = "{call sp_insertarvinilo(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}";
+        try (Connection conexion = Conexion.getInstancia().conectar();
+             CallableStatement consulta = conexion.prepareCall(sql)) {
+            consulta.setString(1, vinilo.getSku());
+            consulta.setString(2, vinilo.getTitulo());
+            consulta.setString(3, vinilo.getAnioLanzamiento());
+            consulta.setDouble(4, vinilo.getPrecio());
+            consulta.setInt(5, vinilo.getStock());
+            consulta.setInt(6, 2); // stock_minimo por defecto
+            consulta.setInt(7, vinilo.getGenero() != null ? vinilo.getGenero().getIdGenero() : 1);
+            consulta.setString(8, vinilo.getProductor() != null ? vinilo.getProductor().getIdProductor() : "DISQ-01");
+            consulta.setInt(9, 1); // id_proveedor por defecto
+            consulta.setString(10, vinilo.getUrlFoto());
+            
+            boolean ejecutado = consulta.executeUpdate() > 0;
+            
+            if (ejecutado && vinilo.getArtista() != null && vinilo.getArtista().getIdArtista() > 0) {
+                asociarArtista(vinilo.getSku(), vinilo.getArtista().getIdArtista(), conexion);
+            }
+            return ejecutado;
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new DaoException("Error al insertar vinilo: " + e.getMessage(), e);
         }
     }
 
     @Override
     public boolean actualizar(Vinilo vinilo) {
-        String sql = "UPDATE vinilo SET sku = ?, titulo = ?, anio_lanzamiento = ?, precio = ?, stock = ?, " +
-                     "id_artista = ?, id_genero = ?, id_productor = ? WHERE id_vinilo = ?";
-
-        try (Connection conn = ConexionSingleton.getConexion();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setString(1, vinilo.getSku());
-            pstmt.setString(2, vinilo.getTitulo());
-            pstmt.setInt(3, vinilo.getAnioLanzamiento());
-            pstmt.setDouble(4, vinilo.getPrecio());
-            pstmt.setInt(5, vinilo.getStock());
-            pstmt.setInt(6, vinilo.getArtista().getIdArtista());
-            pstmt.setInt(7, vinilo.getGenero().getIdGenero());
-            pstmt.setInt(8, vinilo.getProductor().getIdProductor());
-            pstmt.setInt(9, vinilo.getIdVinilo());
-
-            return pstmt.executeUpdate() > 0;
-
+        String sql = "{call sp_actualizarvinilo(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}";
+        try (Connection conexion = Conexion.getInstancia().conectar();
+             CallableStatement consulta = conexion.prepareCall(sql)) {
+            consulta.setString(1, vinilo.getSku());
+            consulta.setString(2, vinilo.getTitulo());
+            consulta.setString(3, vinilo.getAnioLanzamiento());
+            consulta.setDouble(4, vinilo.getPrecio());
+            consulta.setInt(5, vinilo.getStock());
+            consulta.setInt(6, 2); // stock_minimo
+            consulta.setInt(7, vinilo.getGenero() != null ? vinilo.getGenero().getIdGenero() : 1);
+            consulta.setString(8, vinilo.getProductor() != null ? vinilo.getProductor().getIdProductor() : "DISQ-01");
+            consulta.setInt(9, 1); // id_proveedor
+            consulta.setString(10, vinilo.getUrlFoto());
+            
+            boolean actualizado = consulta.executeUpdate() > 0;
+            
+            if (actualizado && vinilo.getArtista() != null && vinilo.getArtista().getIdArtista() > 0) {
+                actualizarAsociacionArtista(vinilo.getSku(), vinilo.getArtista().getIdArtista(), conexion);
+            }
+            return actualizado;
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new DaoException("Error al actualizar vinilo: " + e.getMessage(), e);
         }
+    }
+
+    @Override
+    public boolean eliminar(String sku) {
+        String sql = "{call sp_eliminarvinilo(?)}";
+        try (Connection conexion = Conexion.getInstancia().conectar();
+             CallableStatement consulta = conexion.prepareCall(sql)) {
+            consulta.setString(1, sku);
+            return consulta.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw new DaoException("Error al eliminar vinilo: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public List<Vinilo> buscar(String criterio) {
+        List<Vinilo> lista = new ArrayList<>();
+        for (Vinilo v : listarTodos()) {
+            if (v.getTitulo().toLowerCase().contains(criterio.toLowerCase()) || 
+                v.getSku().toLowerCase().contains(criterio.toLowerCase())) {
+                lista.add(v);
+            }
+        }
+        return lista;
+    }
+
+    private void asociarArtista(String sku, int idArtista, Connection conexion) {
+        try (CallableStatement cs = conexion.prepareCall("{call sp_insertarartistasvinilo(?, ?)}")) {
+            cs.setInt(1, idArtista);
+            cs.setString(2, sku);
+            cs.executeUpdate();
+        } catch (SQLException ignored) {}
+    }
+
+    private void actualizarAsociacionArtista(String sku, int idArtista, Connection conexion) {
+        try (java.sql.Statement st = conexion.createStatement()) {
+            st.executeUpdate("DELETE FROM artistas_vinilo WHERE codigo_barras = '" + sku + "'");
+        } catch (SQLException ignored) {}
+        asociarArtista(sku, idArtista, conexion);
     }
 
     private Vinilo mapearVinilo(ResultSet rs) throws SQLException {
         Vinilo vinilo = new Vinilo();
-        vinilo.setIdVinilo(rs.getInt("id_vinilo"));
-        vinilo.setSku(rs.getString("sku"));
-        vinilo.setTitulo(rs.getString("titulo"));
-        vinilo.setAnioLanzamiento(rs.getInt("anio_lanzamiento"));
+        vinilo.setSku(rs.getString("codigo_barras"));
+        vinilo.setTitulo(rs.getString("titulo_album"));
+        vinilo.setAnioLanzamiento(rs.getString("fecha_lanzamiento"));
         vinilo.setPrecio(rs.getDouble("precio"));
-        vinilo.setStock(rs.getInt("stock"));
+        vinilo.setStock(rs.getInt("stock_actual"));
+        vinilo.setUrlFoto(rs.getString("url_foto"));
 
-        Artista artista = new Artista(
-            rs.getInt("id_artista"),
-            rs.getString("nombre_artistico"),
-            rs.getString("pais_origen")
-        );
+        // Mapeo correcto del Género
+        try {
+            int idGen = rs.getInt("id_genero");
+            if (!rs.wasNull()) {
+                Genero genero = new Genero();
+                genero.setIdGenero(idGen);
+                vinilo.setGenero(genero);
+            }
+        } catch (SQLException ignored) {}
 
-        Genero genero = new Genero(
-            rs.getInt("id_genero"),
-            rs.getString("genero_nombre")
-        );
+        // Mapeo correcto del Productor / Disquera
+        try {
+            String nitDisq = rs.getString("nit_disquera");
+            if (nitDisq != null) {
+                Productor productor = new Productor();
+                productor.setIdProductor(nitDisq);
+                vinilo.setProductor(productor);
+            }
+        } catch (SQLException ignored) {}
 
-        Productor productor = new Productor(
-            rs.getInt("id_productor"),
-            rs.getString("nombre_productor"),
-            rs.getString("sello_discografico")
-        );
-
-        vinilo.setArtista(artista);
-        vinilo.setGenero(genero);
-        vinilo.setProductor(productor);
+        // Mapeo del Artista
+        try {
+            int idArt = rs.getInt("id_artista");
+            if (!rs.wasNull() && idArt > 0) {
+                Artista artista = new Artista();
+                artista.setIdArtista(idArt);
+                artista.setNombreArtistico(rs.getString("nombre_artista"));
+                artista.setNacionalidad(rs.getString("nacionalidad"));
+                artista.setBiografia(rs.getString("biografia"));
+                vinilo.setArtista(artista);
+            }
+        } catch (SQLException ignored) {}
 
         return vinilo;
     }

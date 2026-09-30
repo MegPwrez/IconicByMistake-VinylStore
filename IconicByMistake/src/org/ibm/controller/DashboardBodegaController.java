@@ -6,6 +6,7 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -136,27 +137,16 @@ public class DashboardBodegaController implements Initializable {
         navegar(evento, "/org/ibm/view/ClienteView.fxml", "Librería Saturno - Nuevo Cliente");
     }
 
-    // Método de navegación genérico para ActionEvent (Botones)
-    private void navegar(ActionEvent evento, String ruta, String titulo) {
+    // Método de navegación genérico unificado para ActionEvent y MouseEvent
+    private void navegar(Event evento, String ruta, String titulo) {
         try {
-            Stage escenarioPrincipal = (Stage) ((Node) evento.getSource()).getScene().getWindow();
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(ruta));
-            Parent root = loader.load();
-            Scene scene = new Scene(root);
-            escenarioPrincipal.setTitle(titulo);
-            escenarioPrincipal.setScene(scene);
-            escenarioPrincipal.show();
-        } catch (IOException | NullPointerException e) {
-            LOGGER.log(Level.WARNING, "Error al cargar la ruta: " + ruta, e);
-            mostrarAlertaConstruccion(ruta);
-        }
-    }
+            URL archivoFxml = getClass().getResource(ruta);
+            if (archivoFxml == null) {
+                throw new IOException("No se encontró el archivo FXML en la ruta especificada: " + ruta);
+            }
 
-    // Método de navegación genérico sobrecargado para MouseEvent (Tarjetas/VBox)
-    private void navegar(MouseEvent evento, String ruta, String titulo) {
-        try {
             Stage escenarioPrincipal = (Stage) ((Node) evento.getSource()).getScene().getWindow();
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(ruta));
+            FXMLLoader loader = new FXMLLoader(archivoFxml);
             Parent root = loader.load();
             Scene scene = new Scene(root);
             escenarioPrincipal.setTitle(titulo);
@@ -172,7 +162,7 @@ public class DashboardBodegaController implements Initializable {
         Alert alerta = new Alert(Alert.AlertType.WARNING);
         alerta.setTitle("Aviso");
         alerta.setHeaderText("Vista no disponible");
-        alerta.setContentText("No se pudo cargar el archivo FXML en la ruta: " + ruta);
+        alerta.setContentText("No se pudo cargar el archivo FXML en la ruta: " + ruta + "\nVerifica que el archivo exista en el paquete view.");
         alerta.showAndWait();
     }
 }

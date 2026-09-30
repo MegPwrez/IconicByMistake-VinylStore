@@ -5,11 +5,13 @@ import org.ibm.model.Vinilo;
 
 public interface ViniloDAO {
 
-    List<Vinilo> listar();
+    List<Vinilo> listarTodos();
 
     List<Vinilo> buscar(String criterio);
 
-    boolean insertar(Vinilo vinilo);
+    boolean crear(Vinilo vinilo);
 
     boolean actualizar(Vinilo vinilo);
+    
+    boolean eliminar(String id);
 }

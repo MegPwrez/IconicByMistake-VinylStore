@@ -1,24 +1,24 @@
 package org.ibm.model;
 
 public class Productor {
-    private int idProductor;
+    private String idProductor;
     private String nombreProductor;
     private String selloDiscografico;
 
     public Productor() {
     }
 
-    public Productor(int idProductor, String nombreProductor, String selloDiscografico) {
+    public Productor(String idProductor, String nombreProductor, String selloDiscografico) {
         this.idProductor = idProductor;
         this.nombreProductor = nombreProductor;
         this.selloDiscografico = selloDiscografico;
     }
 
-    public int getIdProductor() {
+    public String getIdProductor() {
         return idProductor;
     }
 
-    public void setIdProductor(int idProductor) {
+    public void setIdProductor(String idProductor) {
         this.idProductor = idProductor;
     }
 
