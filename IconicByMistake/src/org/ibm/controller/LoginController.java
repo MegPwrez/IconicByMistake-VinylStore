@@ -66,16 +66,16 @@ public class LoginController {
             case "admin":
             case "administrador":
                 fxmlPath = "/org/lsa/imb/DashboardAdminView.fxml";
-                tituloVentana = "Librería Saturno - Panel de Administración";
+                tituloVentana = "Iconic By Mistake- Panel  Admin";
                 break;
             case "cajero":
                 fxmlPath = "/org/imb/view/DashboardCajeroView.fxml";
-                tituloVentana = "Librería Saturno - Módulo de Ventas";
+                tituloVentana = "Iconic By Mistake- Panel  Cajero";
                 break;
             case "empleado":
             case "bodega":
                 fxmlPath ="/org/ibm/view/DashboardBodegaView.fxml";
-                tituloVentana = "Librería Saturno - Módulo de Inventario";
+                tituloVentana = "Iconic By Mistake- Panel  Bodega";
                 break;
             default:
                 log.severe("El rol '" + rol + "' asignado al usuario " + correoText + " no tiene una vista FXML configurada.");

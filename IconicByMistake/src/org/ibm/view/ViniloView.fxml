@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ibm.controller.ViniloController">
+<BorderPane style="-fx-background-color: #F0F5F3;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ibm.controller.ViniloController">
     <padding>
         <Insets bottom="20" left="20" right="20" top="20" />
     </padding>
@@ -22,22 +22,22 @@
             <padding>
                 <Insets right="20" />
             </padding>
-            <Button onAction="#handleVolver" text="Volver al Menú" />
-            <Label style="-fx-font-size: 18; -fx-font-weight: bold;" text="Registrar Vinilo" />
-            <TextField fx:id="txtCodigoVinilo" disable="true" prefHeight="30.0" promptText="Código / ISBN" />
-            <TextField fx:id="txtTitulo" disable="true" prefHeight="30.0" promptText="Título" />
+            <Button onAction="#handleVolver" prefHeight="34.0" prefWidth="104.0" style="-fx-font-family: &quot;Century Gothic&quot;; -fx-background-color: #8FB5A1;" text="Volver al Menú" textFill="WHITE" />
+            <Label style="-fx-font-size: 18; -fx-font-family: &quot;Century Gothic&quot;; -fx-font-weight: bold;" text="Registrar Vinilo" textFill="#395c4a" />
+            <TextField fx:id="txtCodigoVinilo" disable="true" prefHeight="30.0" promptText="Código / ISBN" style="-fx-font-family: &quot;Century Gothic&quot;;" />
+            <TextField fx:id="txtTitulo" disable="true" prefHeight="30.0" promptText="Título" style="-fx-font-family: &quot;Century Gothic&quot;;" />
             <!-- Modificado: Cambiado DatePicker por TextField de texto plano -->
-            <TextField fx:id="txtFechaLanzamiento" disable="true" prefHeight="30.0" promptText="Fecha de Lanzamiento (ej: 2024)" />
-            <TextField fx:id="txtPrecio" disable="true" prefHeight="30.0" promptText="Precio" />
-            <TextField fx:id="txtStock" disable="true" prefHeight="30.0" promptText="Stock" />
-            <ComboBox fx:id="cmbArtista" disable="true" prefHeight="29.0" prefWidth="280.0" promptText="Seleccionar Artista" />
-            <ComboBox fx:id="cmbGenero" disable="true" prefHeight="30.0" prefWidth="277.0" promptText="Seleccionar Género" />
-            <ComboBox fx:id="cmbProductor" disable="true" prefHeight="30.0" prefWidth="277.0" promptText="Seleccionar Productor" />
+            <TextField fx:id="txtFechaLanzamiento" disable="true" prefHeight="30.0" promptText="Fecha de Lanzamiento (ej: 2024)" style="-fx-font-family: &quot;Century Gothic&quot;;" />
+            <TextField fx:id="txtPrecio" disable="true" prefHeight="30.0" promptText="Precio" style="-fx-font-family: &quot;Century Gothic&quot;;" />
+            <TextField fx:id="txtStock" disable="true" prefHeight="30.0" promptText="Stock" style="-fx-font-family: &quot;Century Gothic&quot;;" />
+            <ComboBox fx:id="cmbArtista" disable="true" prefHeight="29.0" prefWidth="280.0" promptText="Seleccionar Artista" style="-fx-font-family: &quot;Century Gothic&quot;;" />
+            <ComboBox fx:id="cmbGenero" disable="true" prefHeight="30.0" prefWidth="277.0" promptText="Seleccionar Género" style="-fx-font-family: &quot;Century Gothic&quot;;" />
+            <ComboBox fx:id="cmbProductor" disable="true" prefHeight="30.0" prefWidth="277.0" promptText="Seleccionar Productor" style="-fx-font-family: &quot;Century Gothic&quot;;" />
             <ImageView fx:id="imgPortada" fitHeight="170.0" fitWidth="127.0" pickOnBounds="true" preserveRatio="true" />
-            <Button fx:id="btnCambiarFoto" disable="true" onAction="#handleCambiarFoto" prefHeight="30.0" prefWidth="120" text="Cambiar foto" />
+            <Button fx:id="btnCambiarFoto" disable="true" onAction="#handleCambiarFoto" prefHeight="41.0" prefWidth="120" style="-fx-font-family: &quot;Century Gothic&quot;; -fx-background-color: #071A09;" text="Cambiar foto" textFill="#fffafa" />
             <HBox spacing="10">
-                <Button onAction="#handleGuardar" prefWidth="120" text="Guardar" />
-                <Button onAction="#handleCancelar" prefWidth="120" text="Cancelar" />
+                <Button onAction="#handleGuardar" prefHeight="39.0" prefWidth="120" style="-fx-font-family: &quot;Century Gothic&quot;; -fx-background-color: #1E8A35;" text="Guardar" textFill="WHITE" />
+                <Button onAction="#handleCancelar" prefHeight="39.0" prefWidth="120" style="-fx-font-family: &quot;Century Gothic&quot;; -fx-background-color: #55AB66;" text="Cancelar" textFill="#fffafa" />
             </HBox>
             <Label fx:id="lblMensaje" />
         </VBox>
@@ -45,12 +45,12 @@
 
     <center>
         <VBox spacing="10">
-            <Label style="-fx-font-size: 18; -fx-font-weight: bold;" text="Lista de Vinilos" />
-            <TextField fx:id="txtBuscar" promptText="Buscar por código, título, fecha, precio o stock…" />
-            <TableView fx:id="tablaVinilos">
+            <Label style="-fx-font-size: 18; -fx-font-family: &quot;Century Gothic&quot;; -fx-font-weight: bold;" text="Lista de Vinilos" textFill="#395c4a" />
+            <TextField fx:id="txtBuscar" promptText="Buscar por código, título, fecha, precio o stock…" style="-fx-font-family: &quot;Century Gothic&quot;;" />
+            <TableView fx:id="tablaVinilos" style="-fx-font-family: &quot;Century Gothic&quot;;">
                 <columns>
-                    <TableColumn fx:id="colCodigo" prefWidth="110" text="Código" />
-                    <TableColumn fx:id="colTitulo" prefWidth="180" text="Título" />
+                    <TableColumn fx:id="colCodigo" prefWidth="110" style="-fx-font-family: &quot;Century Gothic&quot;;" text="Código" />
+                    <TableColumn fx:id="colTitulo" prefWidth="180" style="-fx-font-family: &quot;Century Gothic&quot;;" text="Título" />
                     <TableColumn fx:id="colFecha" prefWidth="120" text="Fecha Lanzamiento" />
                     <TableColumn fx:id="colPrecio" prefWidth="90" text="Precio" />
                     <TableColumn fx:id="colStock" prefWidth="90" text="Stock" />
@@ -62,14 +62,14 @@
             <HBox prefHeight="100.0" prefWidth="200.0">
                <children>
                      <HBox spacing="10">
-                         <Button fx:id="btnNuevo" onAction="#handleNuevo" prefWidth="120" text="Nuevo +" />
-                         <Button fx:id="btnEditar" onAction="#handleEditar" prefWidth="120" text="Editar" />
+                         <Button fx:id="btnNuevo" onAction="#handleNuevo" prefHeight="35.0" prefWidth="120" style="-fx-font-family: &quot;Century Gothic&quot;; -fx-background-color: #658273;" text="Nuevo +" textFill="#eeeaea" />
+                         <Button fx:id="btnEditar" onAction="#handleEditar" prefHeight="35.0" prefWidth="120" style="-fx-font-family: &quot;Century Gothic&quot;; -fx-background-color: #386646;" text="Editar" textFill="WHITE" />
                      </HBox>
                      <HBox alignment="TOP_RIGHT" prefHeight="100.0" prefWidth="538.0" spacing="10">
-                         <Button fx:id="btnPrimero" onAction="#handlePrimero" text="Primero" />
-                         <Button fx:id="btnAnterior" onAction="#handleAnterior" text="Anterior" />
-                         <Button fx:id="btnSiguiente" onAction="#handleSiguiente" text="Siguiente" />
-                         <Button fx:id="btnUltimo" onAction="#handleUltimo" text="Último" />
+                         <Button fx:id="btnPrimero" onAction="#handlePrimero" prefHeight="34.0" prefWidth="60.0" style="-fx-font-family: &quot;Century Gothic&quot;; -fx-background-color: #9BBABA;" text="Primero" />
+                         <Button fx:id="btnAnterior" onAction="#handleAnterior" prefHeight="33.0" prefWidth="62.0" style="-fx-font-family: &quot;Century Gothic&quot;; -fx-background-color: #9BBABA;" text="Anterior" />
+                         <Button fx:id="btnSiguiente" onAction="#handleSiguiente" prefHeight="33.0" prefWidth="70.0" style="-fx-font-family: &quot;Century Gothic&quot;; -fx-background-color: #9BBABA;" text="Siguiente" />
+                         <Button fx:id="btnUltimo" onAction="#handleUltimo" prefHeight="32.0" prefWidth="61.0" style="-fx-font-family: &quot;Century Gothic&quot;; -fx-background-color: #9BBABA;" text="Último" />
                      </HBox>
                </children>
             </HBox>

@@ -74,62 +74,62 @@ public class DashboardBodegaController implements Initializable {
     public void cerrarSesion(ActionEvent evento) {
         LOGGER.info("Cerrando sesión desde el menú de bodega.");
         SesionUsuario.getInstancia().cerrarSesion();
-        navegar(evento, "/org/ibm/view/LoginView.fxml", "Librería Saturno - Inicio de Sesión");
+        navegar(evento, "/org/ibm/view/LoginView.fxml", "Iconic By Mistake- Inicio de Sesión");
     }
 
     @FXML
     public void irAInventario(ActionEvent evento) {
-        navegar(evento, "/org/ibm/view/InventarioView.fxml", "Librería Saturno - Inventario");
+        navegar(evento, "/org/ibm/view/VinilosInventarioView.fxml", "Iconic By Mistake - Inventario");
     }
 
     @FXML
     public void irAVinilo(ActionEvent evento) {
-        navegar(evento, "/org/ibm/view/ViniloView.fxml", "Librería Saturno - Vinilos");
+        navegar(evento, "/org/ibm/view/ViniloView.fxml", "Iconic By Mistake - Vinilos");
     }
 
     @FXML
     public void irACatalogo(ActionEvent evento) {
-        navegar(evento, "/org/ibm/view/CatalogoView.fxml", "Librería Saturno - Catálogo");
+        navegar(evento, "/org/ibm/view/CatalogoView.fxml", "Iconic By Mistake - Catálogo");
     }
 
     @FXML
     public void irAArtista(ActionEvent evento) {
-        navegar(evento, "/org/ibm/view/ArtistaView.fxml", "Librería Saturno - Artistas");
+        navegar(evento, "/org/ibm/view/ArtistasView.fxml", "Iconic By Mistake - Artistas");
     }
 
     @FXML
     public void irAGeneros(ActionEvent evento) {
-        navegar(evento, "/org/ibm/view/GeneroView.fxml", "Librería Saturno - Géneros");
+        navegar(evento, "/org/ibm/view/GenerosView.fxml", "Iconic By Mistake - Géneros");
     }
 
     @FXML
     public void irAProductores(ActionEvent evento) {
-        navegar(evento, "/org/ibm/view/ProductorView.fxml", "Librería Saturno - Productores");
+        navegar(evento, "/org/ibm/view/ProductoresView.fxml", "Iconic By Mistake - Productores");
     }
 
     @FXML
     public void verInventario(MouseEvent evento) {
-        navegar(evento, "/org/ibm/view/InventarioView.fxml", "Librería Saturno - Inventario");
+        navegar(evento, "/org/ibm/view/VinilosInventarioView.fxml", "Iconic By Mistake - Inventario");
     }
 
     @FXML
     public void nuevoVinilo(MouseEvent evento) {
-        navegar(evento, "/org/ibm/view/ViniloView.fxml", "Librería Saturno - Nuevo Vinilo");
+        navegar(evento, "/org/ibm/view/ViniloView.fxml", "Iconic By Mistake - Nuevo Vinilo");
     }
 
     @FXML
     public void nuevoArtista(MouseEvent evento) {
-        navegar(evento, "/org/ibm/view/ArtistaView.fxml", "Librería Saturno - Nuevo Artista");
+        navegar(evento, "/org/ibm/view/ArtistasView.fxml", "Iconic By Mistake - Nuevo Artista");
     }
 
     @FXML
     public void nuevoGenero(MouseEvent evento) {
-        navegar(evento, "/org/ibm/view/GeneroView.fxml", "Librería Saturno - Nuevo Género");
+        navegar(evento, "/org/ibm/view/GenerosView.fxml", "Iconic By Mistake - Nuevo Género");
     }
 
     @FXML
     public void nuevoProductor(MouseEvent evento) {
-        navegar(evento, "/org/ibm/view/ProductorView.fxml", "Librería Saturno - Nuevo Productor");
+        navegar(evento, "/org/ibm/view/ProductoresView.fxml", "Iconic By Mistake - Nuevo Productor");
     }
 
     @FXML
@@ -137,7 +137,6 @@ public class DashboardBodegaController implements Initializable {
         navegar(evento, "/org/ibm/view/ClienteView.fxml", "Librería Saturno - Nuevo Cliente");
     }
 
-    // Método de navegación genérico unificado para ActionEvent y MouseEvent
     private void navegar(Event evento, String ruta, String titulo) {
         try {
             URL archivoFxml = getClass().getResource(ruta);

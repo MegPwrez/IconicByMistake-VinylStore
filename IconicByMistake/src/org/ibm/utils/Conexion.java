@@ -1,6 +1,4 @@
-
 package org.ibm.utils;
-
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,8 +6,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
-
-
 
 public class Conexion {
 
@@ -56,5 +52,13 @@ public class Conexion {
 
     public Connection conectar() throws SQLException {
         return DriverManager.getConnection(url, user, password);
+    }
+
+    /**
+     * Método estático requerido por los DAO (como ArtistaDAOImpl)
+     * para obtener la conexión directamente de forma sencilla.
+     */
+    public static Connection getConexion() throws SQLException {
+        return getInstancia().conectar();
     }
 }

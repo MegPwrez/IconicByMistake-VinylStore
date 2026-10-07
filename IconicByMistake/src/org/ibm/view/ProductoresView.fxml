@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane style="-fx-background-color: #F0F5F3;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ibm.controller.ProductoresController">
+    <padding>
+        <Insets bottom="20" left="20" right="20" top="20" />
+    </padding>
+
+    <left>
+        <VBox maxWidth="300" minWidth="300" spacing="10">
+            <padding>
+                <Insets right="20" />
+            </padding>
+            <Button onAction="#handleVolverMenu" prefHeight="37.0" prefWidth="104.0" style="-fx-font-family: &quot;Century Gothic&quot;; -fx-background-color: #8FB5A1;" text="Volver al Menú" textFill="WHITE" />
+            <Label style="-fx-font-size: 18; -fx-font-family: &quot;Century Gothic&quot;; -fx-font-weight: bold;" text="Registrar Productor" />
+            <TextField fx:id="txtIdProductor" disable="true" prefHeight="30.0" promptText="ID Productor" style="-fx-font-family: &quot;Century Gothic&quot;;" />
+            <TextField fx:id="txtNombreProductor" disable="true" prefHeight="30.0" promptText="Nombre del Productor" style="-fx-font-family: &quot;Century Gothic&quot;;" />
+            <TextField fx:id="txtSelloDiscografico" disable="true" prefHeight="30.0" promptText="Sello Discográfico" style="-fx-font-family: &quot;Century Gothic&quot;;" />
+            <HBox spacing="10">
+                <Button fx:id="btnNuevo" onAction="#handleNuevo" prefHeight="39.0" prefWidth="120" style="-fx-font-family: &quot;Century Gothic&quot;; -fx-background-color: #658273;" text="Nuevo" textFill="#fffdfd" />
+                <Button fx:id="btnEditar" onAction="#handleEditar" prefHeight="38.0" prefWidth="120" style="-fx-font-family: &quot;Century Gothic&quot;; -fx-background-color: #386646;" text="Editar" textFill="WHITE" />
+            </HBox>
+            <HBox spacing="10">
+                <Button onAction="#handleGuardar" prefHeight="38.0" prefWidth="120" style="-fx-font-family: &quot;Century Gothic&quot;; -fx-background-color: #1E8A35;" text="Guardar" textFill="WHITE" />
+                <Button onAction="#handleCancelar" prefHeight="39.0" prefWidth="120" style="-fx-font-family: &quot;Century Gothic&quot;; -fx-background-color: #55AB66;" text="Cancelar" textFill="WHITE" />
+            </HBox>
+            <Label fx:id="lblMensaje" />
+        </VBox>
+    </left>
+
+    <center>
+        <VBox spacing="10">
+            <Label style="-fx-font-size: 18; -fx-font-family: &quot;Century Gothic&quot;; -fx-font-weight: bold;" text="Lista de Productores" />
+            <TextField fx:id="txtBuscar" promptText="Buscar por ID, nombre o sello discográfico…" style="-fx-font-family: &quot;Century Gothic&quot;;" />
+            <TableView fx:id="tablaProductores" style="-fx-font-family: &quot;Century Gothic&quot;;">
+                <columns>
+                    <TableColumn fx:id="colIdProductor" prefWidth="120" text="ID Productor" />
+                    <TableColumn fx:id="colNombreProductor" prefWidth="220" text="Nombre" />
+                    <TableColumn fx:id="colSelloDiscografico" prefWidth="180" text="Sello Discográfico" />
+                </columns>
+            </TableView>
+            <HBox spacing="10">
+                <Button fx:id="btnPrimero" onAction="#handlePrimero" style="-fx-font-family: &quot;Century Gothic&quot;; -fx-background-color: #9BBABA;" text="Primero" />
+                <Button fx:id="btnAnterior" onAction="#handleAnterior" style="-fx-font-family: &quot;Century Gothic&quot;; -fx-background-color: #9BBABA;" text="Anterior" />
+                <Button fx:id="btnSiguiente" onAction="#handleSiguiente" style="-fx-font-family: &quot;Century Gothic&quot;; -fx-background-color: #9BBABA;" text="Siguiente" />
+                <Button fx:id="btnUltimo" onAction="#handleUltimo" style="-fx-font-family: &quot;Century Gothic&quot;; -fx-background-color: #9BBABA;" text="Último" />
+            </HBox>
+        </VBox>
+    </center>
+</BorderPane>

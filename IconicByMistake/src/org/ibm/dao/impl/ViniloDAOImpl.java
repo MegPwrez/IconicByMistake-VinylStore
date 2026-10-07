@@ -151,12 +151,13 @@ public class ViniloDAOImpl implements ViniloDAO {
         vinilo.setStock(rs.getInt("stock_actual"));
         vinilo.setUrlFoto(rs.getString("url_foto"));
 
-        // Mapeo correcto del Género
+        // Mapeo correcto del Género usando setNombre(...)
         try {
             int idGen = rs.getInt("id_genero");
             if (!rs.wasNull()) {
                 Genero genero = new Genero();
                 genero.setIdGenero(idGen);
+                genero.setNombre(rs.getString("nombre_genero")); // <-- Corregido aquí
                 vinilo.setGenero(genero);
             }
         } catch (SQLException ignored) {}
@@ -167,6 +168,7 @@ public class ViniloDAOImpl implements ViniloDAO {
             if (nitDisq != null) {
                 Productor productor = new Productor();
                 productor.setIdProductor(nitDisq);
+                productor.setNombreProductor(rs.getString("nombre_productor"));
                 vinilo.setProductor(productor);
             }
         } catch (SQLException ignored) {}
