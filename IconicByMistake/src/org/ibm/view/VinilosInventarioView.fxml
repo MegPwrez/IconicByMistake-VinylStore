@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane style="-fx-background-color: #F0F5F3;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ibm.controller.VinilosInventarioController">
+    <padding>
+        <Insets bottom="20" left="20" right="20" top="20" />
+    </padding>
+
+    <left>
+        <VBox alignment="TOP_CENTER" maxWidth="280" minWidth="280" spacing="15">
+            <padding>
+                <Insets right="20" />
+            </padding>
+            <Button maxWidth="Infinity" onAction="#handleVolverMenu" prefHeight="37.0" prefWidth="260.0" style="-fx-font-family: &quot;Century Gothic&quot;; -fx-background-color: #8FB5A1;" text="Volver al Menú" />
+            
+            <Label style="-fx-font-size: 18; -fx-font-family: &quot;Century Gothic&quot;; -fx-font-weight: bold;" text="Inventario de Vinilos" />
+            
+            <Label style="-fx-font-family: &quot;Century Gothic&quot;;" text="Seleccione un vinilo de la lista para ver su detalle e imagen de carátula." wrapText="true" />
+            
+            <!-- Contenedor Visual con fx:id="imgVinilo" enlazado al controlador -->
+            <VBox alignment="CENTER" prefHeight="220" prefWidth="220" style="-fx-border-color: #cccccc; -fx-border-radius: 5; -fx-background-color: #f9f9f9;">
+                <ImageView fx:id="imgVinilo" fitHeight="200" fitWidth="200" preserveRatio="true" />
+            </VBox>
+        </VBox>
+    </left>
+
+    <center>
+        <VBox spacing="10">
+            <Label style="-fx-font-size: 18; -fx-font-family: &quot;Century Gothic&quot;; -fx-font-weight: bold;" text="Catálogo y Stock de Discos" />
+            <TextField fx:id="txtBuscar" promptText="Buscar por SKU, título, precio o stock…" style="-fx-font-family: &quot;Century Gothic&quot;;" />
+            <TableView fx:id="tablaVinilos" style="-fx-font-family: &quot;Century Gothic&quot;;" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colSku" prefWidth="130" text="SKU" />
+                    <TableColumn fx:id="colTitulo" prefWidth="240" text="Título" />
+                    <TableColumn fx:id="colPrecio" prefWidth="100" text="Precio" />
+                    <TableColumn fx:id="colStock" prefWidth="90" text="Stock" />
+                </columns>
+            </TableView>
+        </VBox>
+    </center>
+</BorderPane>

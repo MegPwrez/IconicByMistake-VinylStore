@@ -75,7 +75,7 @@ public class LoginController {
             case "empleado":
             case "bodega":
                 fxmlPath ="/org/ibm/view/DashboardBodegaView.fxml";
-                tituloVentana = "Librería Saturno - Módulo de Inventario";
+                tituloVentana = "Iconic By Mistake- Panel  Bodega";
                 break;
             default:
                 log.severe("El rol '" + rol + "' asignado al usuario " + correoText + " no tiene una vista FXML configurada.");
