@@ -1,4 +1,3 @@
-
 package org.ibm.utils;
 
 import org.ibm.model.Usuario;
@@ -31,12 +30,17 @@ public class ControlAcceso {
         String rol = usuario.getRol().toLowerCase();
 
         switch (vistaDestino) {
-            case "DashboardAdminController.fxml":
+            case "DashboardAdminView.fxml":
                 return rol.equals("admin") || rol.equals("administrador");
-            case "DashboardBodegaController.fxml":
-                return rol.equals("admin") || rol.equals("administrador") || rol.equals("bodega") || rol.equals("empleado");
-            case "DashboardCajeroController.fxml":
-                return rol.equals("admin") || rol.equals("administrador") || rol.equals("cajero");
+
+            case "DashboardBodegaView.fxml":
+                return rol.equals("admin") || rol.equals("administrador") 
+                        || rol.equals("bodega") || rol.equals("empleado");
+
+            case "DashboardCajeroView.fxml":
+                return rol.equals("admin") || rol.equals("administrador") 
+                        || rol.equals("cajero");
+
             default:
                 return false;
         }
