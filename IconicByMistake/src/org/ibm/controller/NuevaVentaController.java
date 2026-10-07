@@ -29,7 +29,7 @@ import org.ibm.model.Usuario;
 import org.ibm.model.Venta;
 import org.ibm.model.Vinilo;
 import org.ibm.service.VentaService;
-import org.ibm.system.Main;
+import org.ibm.Main;
 import org.ibm.utils.SesionUsuario;
 
 public class NuevaVentaController implements Initializable {
