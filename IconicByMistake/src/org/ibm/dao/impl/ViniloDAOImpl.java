@@ -4,6 +4,7 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 import org.ibm.dao.ViniloDAO;
@@ -32,12 +33,12 @@ public class ViniloDAOImpl implements ViniloDAO {
         return lista;
     }
 
-    public Vinilo buscarPorId(String sku) {
+    public Vinilo buscarPorId(String codigoBarras) {
         Vinilo vinilo = null;
         String sql = "{call sp_buscarlinilo(?)}";
         try (Connection conexion = Conexion.getInstancia().conectar();
              CallableStatement consulta = conexion.prepareCall(sql)) {
-            consulta.setString(1, sku);
+            consulta.setString(1, codigoBarras);
             try (ResultSet rs = consulta.executeQuery()) {
                 if (rs.next()) {
                     vinilo = mapearVinilo(rs);
@@ -54,21 +55,21 @@ public class ViniloDAOImpl implements ViniloDAO {
         String sql = "{call sp_insertarvinilo(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}";
         try (Connection conexion = Conexion.getInstancia().conectar();
              CallableStatement consulta = conexion.prepareCall(sql)) {
-            consulta.setString(1, vinilo.getSku());
-            consulta.setString(2, vinilo.getTitulo());
-            consulta.setString(3, vinilo.getAnioLanzamiento());
+            consulta.setString(1, vinilo.getCodigoBarras());
+            consulta.setString(2, vinilo.getTituloAlbum());
+            consulta.setDate(3, vinilo.getFechaLanzamiento());
             consulta.setDouble(4, vinilo.getPrecio());
-            consulta.setInt(5, vinilo.getStock());
+            consulta.setInt(5, vinilo.getStockActual());
             consulta.setInt(6, 2); // stock_minimo por defecto
             consulta.setInt(7, vinilo.getGenero() != null ? vinilo.getGenero().getIdGenero() : 1);
             consulta.setString(8, vinilo.getProductor() != null ? vinilo.getProductor().getIdProductor() : "DISQ-01");
             consulta.setInt(9, 1); // id_proveedor por defecto
-            consulta.setString(10, vinilo.getUrlFoto());
+            consulta.setNull(10, Types.VARCHAR); // url_foto omitido
             
             boolean ejecutado = consulta.executeUpdate() > 0;
             
             if (ejecutado && vinilo.getArtista() != null && vinilo.getArtista().getIdArtista() > 0) {
-                asociarArtista(vinilo.getSku(), vinilo.getArtista().getIdArtista(), conexion);
+                asociarArtista(vinilo.getCodigoBarras(), vinilo.getArtista().getIdArtista(), conexion);
             }
             return ejecutado;
         } catch (SQLException e) {
@@ -81,21 +82,21 @@ public class ViniloDAOImpl implements ViniloDAO {
         String sql = "{call sp_actualizarvinilo(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}";
         try (Connection conexion = Conexion.getInstancia().conectar();
              CallableStatement consulta = conexion.prepareCall(sql)) {
-            consulta.setString(1, vinilo.getSku());
-            consulta.setString(2, vinilo.getTitulo());
-            consulta.setString(3, vinilo.getAnioLanzamiento());
+            consulta.setString(1, vinilo.getCodigoBarras());
+            consulta.setString(2, vinilo.getTituloAlbum());
+            consulta.setDate(3, vinilo.getFechaLanzamiento());
             consulta.setDouble(4, vinilo.getPrecio());
-            consulta.setInt(5, vinilo.getStock());
+            consulta.setInt(5, vinilo.getStockActual());
             consulta.setInt(6, 2); // stock_minimo
             consulta.setInt(7, vinilo.getGenero() != null ? vinilo.getGenero().getIdGenero() : 1);
             consulta.setString(8, vinilo.getProductor() != null ? vinilo.getProductor().getIdProductor() : "DISQ-01");
             consulta.setInt(9, 1); // id_proveedor
-            consulta.setString(10, vinilo.getUrlFoto());
+            consulta.setNull(10, Types.VARCHAR); // url_foto omitido
             
             boolean actualizado = consulta.executeUpdate() > 0;
             
             if (actualizado && vinilo.getArtista() != null && vinilo.getArtista().getIdArtista() > 0) {
-                actualizarAsociacionArtista(vinilo.getSku(), vinilo.getArtista().getIdArtista(), conexion);
+                actualizarAsociacionArtista(vinilo.getCodigoBarras(), vinilo.getArtista().getIdArtista(), conexion);
             }
             return actualizado;
         } catch (SQLException e) {
@@ -104,11 +105,11 @@ public class ViniloDAOImpl implements ViniloDAO {
     }
 
     @Override
-    public boolean eliminar(String sku) {
+    public boolean eliminar(String codigoBarras) {
         String sql = "{call sp_eliminarvinilo(?)}";
         try (Connection conexion = Conexion.getInstancia().conectar();
              CallableStatement consulta = conexion.prepareCall(sql)) {
-            consulta.setString(1, sku);
+            consulta.setString(1, codigoBarras);
             return consulta.executeUpdate() > 0;
         } catch (SQLException e) {
             throw new DaoException("Error al eliminar vinilo: " + e.getMessage(), e);
@@ -118,38 +119,39 @@ public class ViniloDAOImpl implements ViniloDAO {
     @Override
     public List<Vinilo> buscar(String criterio) {
         List<Vinilo> lista = new ArrayList<>();
+        String criterioLower = criterio.toLowerCase();
         for (Vinilo v : listarTodos()) {
-            if (v.getTitulo().toLowerCase().contains(criterio.toLowerCase()) || 
-                v.getSku().toLowerCase().contains(criterio.toLowerCase())) {
+            boolean coincideTitulo = v.getTituloAlbum() != null && v.getTituloAlbum().toLowerCase().contains(criterioLower);
+            boolean coincideCodigo = v.getCodigoBarras() != null && v.getCodigoBarras().toLowerCase().contains(criterioLower);
+            if (coincideTitulo || coincideCodigo) {
                 lista.add(v);
             }
         }
         return lista;
     }
 
-    private void asociarArtista(String sku, int idArtista, Connection conexion) {
+    private void asociarArtista(String codigoBarras, int idArtista, Connection conexion) {
         try (CallableStatement cs = conexion.prepareCall("{call sp_insertarartistasvinilo(?, ?)}")) {
             cs.setInt(1, idArtista);
-            cs.setString(2, sku);
+            cs.setString(2, codigoBarras);
             cs.executeUpdate();
         } catch (SQLException ignored) {}
     }
 
-    private void actualizarAsociacionArtista(String sku, int idArtista, Connection conexion) {
+    private void actualizarAsociacionArtista(String codigoBarras, int idArtista, Connection conexion) {
         try (java.sql.Statement st = conexion.createStatement()) {
-            st.executeUpdate("DELETE FROM artistas_vinilo WHERE codigo_barras = '" + sku + "'");
+            st.executeUpdate("DELETE FROM artistas_vinilo WHERE codigo_barras = '" + codigoBarras + "'");
         } catch (SQLException ignored) {}
-        asociarArtista(sku, idArtista, conexion);
+        asociarArtista(codigoBarras, idArtista, conexion);
     }
 
     private Vinilo mapearVinilo(ResultSet rs) throws SQLException {
         Vinilo vinilo = new Vinilo();
-        vinilo.setSku(rs.getString("codigo_barras"));
-        vinilo.setTitulo(rs.getString("titulo_album"));
-        vinilo.setAnioLanzamiento(rs.getString("fecha_lanzamiento"));
+        vinilo.setCodigoBarras(rs.getString("codigo_barras"));
+        vinilo.setTituloAlbum(rs.getString("titulo_album"));
+        vinilo.setFechaLanzamiento(rs.getDate("fecha_lanzamiento"));
         vinilo.setPrecio(rs.getDouble("precio"));
-        vinilo.setStock(rs.getInt("stock_actual"));
-        vinilo.setUrlFoto(rs.getString("url_foto"));
+        vinilo.setStockActual(rs.getInt("stock_actual"));
 
         // Mapeo correcto del Género usando setNombre(...)
         try {
@@ -172,8 +174,6 @@ public class ViniloDAOImpl implements ViniloDAO {
                 vinilo.setProductor(productor);
             }
         } catch (SQLException ignored) {}
-
-        // Mapeo del Artista
         try {
             int idArt = rs.getInt("id_artista");
             if (!rs.wasNull() && idArt > 0) {
