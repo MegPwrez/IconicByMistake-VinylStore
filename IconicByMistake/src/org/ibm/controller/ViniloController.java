@@ -4,9 +4,11 @@ import java.io.File;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.List; // 👈 Asegúrate de importar List
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors; // 👈 Asegúrate de importar Collectors
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -95,6 +97,35 @@ public class ViniloController implements Initializable {
         tablaVinilos.setItems(vinilosFiltrados);
         seleccionarFila();
         configurarBusqueda();
+        
+        // 🌟 Agregado: Lanza la alerta de stock crítico al iniciar
+        verificarStockCritico();
+    }
+
+    // 🌟 NUEVO MÉTODO DE ALERTA PARA VINILO CONTROLLER
+    private void verificarStockCritico() {
+        try {
+            List<Vinilo> criticos = viniloDAO.listarTodos().stream()
+                    .filter(v -> v.getStock() <= 10)
+                    .collect(Collectors.toList());
+
+            if (!criticos.isEmpty()) {
+                StringBuilder sb = new StringBuilder("Los siguientes vinilos tienen stock crítico (<= 10 unidades):\n");
+                for (Vinilo v : criticos) {
+                    sb.append("• ").append(v.getTitulo())
+                      .append(" (SKU: ").append(v.getSku())
+                      .append(") - Unidades: ").append(v.getStock()).append("\n");
+                }
+
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("Alerta de Inventario");
+                alert.setHeaderText(null);
+                alert.setContentText(sb.toString());
+                alert.showAndWait();
+            }
+        } catch (Exception e) {
+            log.log(Level.WARNING, "Error al verificar stock crítico de vinilos", e);
+        }
     }
 
     public void configurarTabla() {
@@ -103,9 +134,30 @@ public class ViniloController implements Initializable {
         colFecha.setCellValueFactory(new PropertyValueFactory<>("anioLanzamiento")); 
         colPrecio.setCellValueFactory(new PropertyValueFactory<>("precio"));
         colStock.setCellValueFactory(new PropertyValueFactory<>("stock"));
-        colArtista.setCellValueFactory(new PropertyValueFactory<>("artista"));
-        colGenero.setCellValueFactory(new PropertyValueFactory<>("genero"));
-        colProductor.setCellValueFactory(new PropertyValueFactory<>("productor"));
+        
+        colArtista.setCellValueFactory(cellData -> {
+            Vinilo vinilo = cellData.getValue();
+            if (vinilo != null && vinilo.getArtista() != null) {
+                return new javafx.beans.property.SimpleStringProperty(vinilo.getArtista().getNombreArtistico());
+            }
+            return new javafx.beans.property.SimpleStringProperty("");
+        });
+
+        colGenero.setCellValueFactory(cellData -> {
+            Vinilo vinilo = cellData.getValue();
+            if (vinilo != null && vinilo.getGenero() != null) {
+                return new javafx.beans.property.SimpleStringProperty(vinilo.getGenero().getNombre());
+            }
+            return new javafx.beans.property.SimpleStringProperty("");
+        });
+
+        colProductor.setCellValueFactory(cellData -> {
+            Vinilo vinilo = cellData.getValue();
+            if (vinilo != null && vinilo.getProductor() != null) {
+                return new javafx.beans.property.SimpleStringProperty(vinilo.getProductor().getNombreProductor());
+            }
+            return new javafx.beans.property.SimpleStringProperty("");
+        });
     }
 
     private void cargarTabla() {
@@ -149,13 +201,10 @@ public class ViniloController implements Initializable {
                     if (newSelection != null) {
                         txtCodigoVinilo.setText(newSelection.getSku());
                         txtTitulo.setText(newSelection.getTitulo());
-                        
                         txtFechaLanzamiento.setText(newSelection.getAnioLanzamiento() != null ? newSelection.getAnioLanzamiento() : "");
-                        
                         txtPrecio.setText(String.valueOf(newSelection.getPrecio()));
                         txtStock.setText(String.valueOf(newSelection.getStock()));
                         
-                        // Seleccionar Artista en ComboBox
                         cmbArtista.setValue(null);
                         if (newSelection.getArtista() != null) {
                             for (Artista artista : cmbArtista.getItems()) {
@@ -166,7 +215,6 @@ public class ViniloController implements Initializable {
                             }
                         }
 
-                        // Seleccionar Género en ComboBox
                         cmbGenero.setValue(null);
                         if (newSelection.getGenero() != null) {
                             for (Genero genero : cmbGenero.getItems()) {
@@ -177,7 +225,6 @@ public class ViniloController implements Initializable {
                             }
                         }
 
-                        // Seleccionar Productor en ComboBox 
                         cmbProductor.setValue(null);
                         if (newSelection.getProductor() != null) {
                             for (Productor prod : cmbProductor.getItems()) {
