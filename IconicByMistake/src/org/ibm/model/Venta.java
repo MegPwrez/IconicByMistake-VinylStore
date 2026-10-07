@@ -95,7 +95,7 @@ public class Venta {
     public void setId_usuario(int id_usuario) {
         this.id_usuario = id_usuario;
     }
-
+ 
       @Override
     public String toString() {
         return "ventas{" +

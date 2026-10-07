@@ -13,7 +13,7 @@ import javafx.fxml.Initializable;
  *
  * @author jrfye
  */
-public class CajeroDashboardController implements Initializable {
+public class NuevaVentaController implements Initializable {
 
     /**
      * Initializes the controller class.

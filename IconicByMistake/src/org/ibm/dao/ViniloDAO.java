@@ -3,7 +3,7 @@ package org.ibm.dao;
 import java.util.List;
 import org.ibm.model.Vinilo;
 
-public interface ViniloDAO {
+public interface  ViniloDAO {
 
     List<Vinilo> listarTodos();
 

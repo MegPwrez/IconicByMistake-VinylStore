@@ -20,11 +20,13 @@ import org.ibm.dao.DetalleVentaDAO;
 import org.ibm.dao.VentaDAO;
 import org.ibm.dao.ViniloDAO;
 import org.ibm.dao.impl.DetalleVentaImpl;
+import org.ibm.dao.impl.VentaDAOImpl;
 import org.ibm.dao.impl.ViniloDAOImpl;
+import org.ibm.exception.DaoException;
+import org.ibm.exception.ValidacionException;
 import org.ibm.model.DetalleVenta;
 import org.ibm.model.Venta;
 import org.ibm.model.Vinilo;
-
 
 public class DetalleVentaController implements Initializable {
 
@@ -34,13 +36,13 @@ public class DetalleVentaController implements Initializable {
     @FXML private TextField txtPrecio;
     @FXML private Label lblMensaje;
     @FXML private TableView<DetalleVenta> tablaDetalleVenta;
-    
+
     @FXML private TableColumn<DetalleVenta, Integer> colIdDetalleVenta;
     @FXML private TableColumn<DetalleVenta, Integer> colNoVenta;
     @FXML private TableColumn<DetalleVenta, String> colcodigoBarras;
     @FXML private TableColumn<DetalleVenta, Integer> colCantidad;
     @FXML private TableColumn<DetalleVenta, Double> colPrecio;
-    
+
     @FXML private Button btnNuevo;
     @FXML private Button btnEditar;
     @FXML private Button btnPrimero;
@@ -51,11 +53,11 @@ public class DetalleVentaController implements Initializable {
 
     private boolean Editar = false;
     private DetalleVenta Editando;
-    
+
     private final DetalleVentaDAO detalleVentaDAO = new DetalleVentaImpl();
     private final VentaDAO ventaDAO = new VentaDAOImpl();
-    private final ViniloDAO libroDAO = new ViniloDAOImpl();
-    
+    private final ViniloDAO viniloDAO = new ViniloDAOImpl();
+
     private final ObservableList<DetalleVenta> listaDetalles = FXCollections.observableArrayList();
     private final FilteredList<DetalleVenta> detallesFiltrados = new FilteredList<>(listaDetalles, p -> true);
 
@@ -72,7 +74,7 @@ public class DetalleVentaController implements Initializable {
     public void configurarTabla() {
         colIdDetalleVenta.setCellValueFactory(new PropertyValueFactory<>("idDetalleventa"));
         colNoVenta.setCellValueFactory(new PropertyValueFactory<>("noVenta"));
-        colcodigoBarras.setCellValueFactory(new PropertyValueFactory<>("isbn"));
+        colcodigoBarras.setCellValueFactory(new PropertyValueFactory<>("codigoBarras"));
         colCantidad.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
         colPrecio.setCellValueFactory(new PropertyValueFactory<>("precioUnitario"));
     }
@@ -102,11 +104,11 @@ public class DetalleVentaController implements Initializable {
                 }
             });
 
-            cmbVinilo.setItems(FXCollections.observableArrayList(ViniloDAO.listarTodos()));
+            cmbVinilo.setItems(FXCollections.observableArrayList(viniloDAO.listarTodos()));
             cmbVinilo.setConverter(new StringConverter<Vinilo>() {
                 @Override
                 public String toString(Vinilo vinilo) {
-                    return vinilo == null ? "" : vinilo.getCodigoBarras() + " - " + vinilo.getTitulo();
+                    return vinilo == null ? "" : vinilo.getCodigoBarras() + " - " + vinilo.getTituloAlbum();
                 }
 
                 @Override
@@ -151,10 +153,10 @@ public class DetalleVentaController implements Initializable {
                             }
                         }
 
-                        cmbLibro.setValue(null);
-                        for (Libro libro : cmbLibro.getItems()) {
-                            if (libro.getIsbn().equals(newSelection.getIsbn())) {
-                                cmbLibro.setValue(libro);
+                        cmbVinilo.setValue(null);
+                        for (Vinilo vinilo : cmbVinilo.getItems()) {
+                            if (vinilo.getCodigoBarras().equals(newSelection.getCodigoBarras())) {
+                                cmbVinilo.setValue(vinilo);
                                 break;
                             }
                         }
@@ -170,7 +172,7 @@ public class DetalleVentaController implements Initializable {
     private void handleGuardar() {
         try {
             ValidacionException.validarNoNulo(cmbVenta.getValue(), "Seleccione una venta.");
-            ValidacionException.validarNoNulo(cmbLibro.getValue(), "Seleccione un libro.");
+            ValidacionException.validarNoNulo(cmbVinilo.getValue(), "Seleccione un vinilo.");
             ValidacionException.validarNoVacio(txtCantidad.getText(), "cantidad");
             ValidacionException.validarPositivo(txtCantidad.getText(), "cantidad");
             ValidacionException.validarNoVacio(txtPrecio.getText(), "precio");
@@ -179,8 +181,8 @@ public class DetalleVentaController implements Initializable {
             DetalleVenta detalle = new DetalleVenta(
                     Editar ? Editando.getIdDetalleventa() : 0,
                     cmbVenta.getValue().getIdVenta(),
-                    cmbLibro.getValue().getIsbn(),
-                    cmbLibro.getValue().getTitulo(),
+                    cmbVinilo.getValue().getCodigoBarras(),
+                    cmbVinilo.getValue().getTituloAlbum(),
                     Integer.parseInt(txtCantidad.getText().trim()),
                     Double.parseDouble(txtPrecio.getText().trim())
             );
@@ -287,33 +289,29 @@ public class DetalleVentaController implements Initializable {
     @FXML
     private void handleVolver() {
         try {
-            Main.cambiarVista(
-                    "/org/lsa/view/DashboardCajeroView.fxml");
+            Main.cambiarVista("/org/lsa/view/DashboardCajeroView.fxml");
         } catch (Exception e) {
-            mostrarError(
-                    "Error al volver al menú: "
-                    + e.getMessage()
-            );
+            mostrarError("Error al volver al menú: " + e.getMessage());
         }
     }
 
     private void limpiarFormulario() {
         cmbVenta.setValue(null);
-        cmbLibro.setValue(null);
+        cmbVinilo.setValue(null);
         txtCantidad.clear();
         txtPrecio.clear();
     }
 
     private void activarFormulario() {
         cmbVenta.setDisable(false);
-        cmbLibro.setDisable(false);
+        cmbVinilo.setDisable(false);
         txtCantidad.setDisable(false);
         txtPrecio.setDisable(false);
     }
 
     private void desactivarFormulario() {
         cmbVenta.setDisable(true);
-        cmbLibro.setDisable(true);
+        cmbVinilo.setDisable(true);
         txtCantidad.setDisable(true);
         txtPrecio.setDisable(true);
     }
