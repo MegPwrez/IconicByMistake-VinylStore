@@ -1,6 +1,4 @@
-
 package org.ibm.model;
-
 
 public class DetalleVenta {
 
@@ -14,6 +12,7 @@ public class DetalleVenta {
 
     public DetalleVenta() {
     }
+
     public DetalleVenta(String codigoBarras, String tituloAlbum, double precioUnitario, int cantidad) {
         this.codigoBarras = codigoBarras;
         this.tituloAlbum = tituloAlbum;
@@ -21,18 +20,21 @@ public class DetalleVenta {
         this.cantidad = cantidad;
         this.subTotal = precioUnitario * cantidad;
     }
-    public DetalleVenta(int idDetalleventa, int noVenta, String CodigoBarras, String titulo, int cantidad, double precioUnitario) {
+
+    public DetalleVenta(int idDetalleventa, int noVenta, String codigoBarras, String tituloAlbum, int cantidad, double precioUnitario) {
         this.idDetalleventa = idDetalleventa;
         this.noVenta = noVenta;
-        this.codigoBarras = CodigoBarras;
-        this.tituloAlbum = tituloAlbum;
+        this.codigoBarras = codigoBarras;
+        this.tituloAlbum = tituloAlbum; // Se corrigió la asignación del título
         this.cantidad = cantidad;
         this.precioUnitario = precioUnitario;
         this.subTotal = precioUnitario * cantidad;
     }
+
     public int getIdDetalleventa() {
         return idDetalleventa;
     }
+
     public void setIdDetalleventa(int idDetalleventa) {
         this.idDetalleventa = idDetalleventa;
     }
@@ -67,6 +69,7 @@ public class DetalleVenta {
 
     public void setCantidad(int cantidad) {
         this.cantidad = cantidad;
+        this.subTotal = this.precioUnitario * cantidad; // Actualiza el subtotal al cambiar cantidad
     }
 
     public double getPrecioUnitario() {
@@ -75,15 +78,14 @@ public class DetalleVenta {
 
     public void setPrecioUnitario(double precioUnitario) {
         this.precioUnitario = precioUnitario;
+        this.subTotal = precioUnitario * this.cantidad; // Actualiza el subtotal al cambiar precio
     }
 
-    public double getsubTotal() {
+    public double getSubTotal() {
         return subTotal;
     }
 
     public void setSubTotal(double subTotal) {
         this.subTotal = subTotal;
     }
-
-  
 }

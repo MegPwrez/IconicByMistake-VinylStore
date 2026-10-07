@@ -5,6 +5,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -27,6 +28,7 @@ import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+
 import org.ibm.dao.ViniloDAO;
 import org.ibm.dao.impl.ViniloDAOImpl;
 import org.ibm.model.Vinilo;
@@ -80,9 +82,9 @@ public class CatalogoController implements Initializable {
                     vinilosFiltrados.setPredicate(p -> true);
                 } else {
                     vinilosFiltrados.setPredicate(vinilo -> {
-                        boolean coincideTitulo = vinilo.getTitulo() != null && vinilo.getTitulo().toLowerCase().contains(busqueda);
-                        boolean coincideId = String.valueOf(vinilo.getIdVinilo()).contains(busqueda);
-                        return coincideTitulo || coincideId;
+                        boolean coincideTitulo = vinilo.getTituloAlbum() != null && vinilo.getTituloAlbum().toLowerCase().contains(busqueda);
+                        boolean coincideCodigo = vinilo.getCodigoBarras() != null && vinilo.getCodigoBarras().toLowerCase().contains(busqueda);
+                        return coincideTitulo || coincideCodigo;
                     });
                 }
                 renderizar();
@@ -99,7 +101,7 @@ public class CatalogoController implements Initializable {
             imagen.setFitHeight(150);
             imagen.setPreserveRatio(true);
 
-            Label lblTitulo = new Label(vinilo.getTitulo());
+            Label lblTitulo = new Label(vinilo.getTituloAlbum());
             lblTitulo.setWrapText(true);
             lblTitulo.setMaxWidth(130);
             lblTitulo.setAlignment(Pos.CENTER);
@@ -119,10 +121,11 @@ public class CatalogoController implements Initializable {
     }
 
     private Image cargarImagenVinilo(Vinilo vinilo) {
-        if (vinilo.getUrlFoto() == null || vinilo.getUrlFoto().trim().isEmpty()) {
+        if (vinilo.getCodigoBarras() == null || vinilo.getCodigoBarras().trim().isEmpty()) {
             return crearImagenPlaceholder();
         }
-        File foto = new File("src", vinilo.getUrlFoto());
+        String nombreFoto = vinilo.getCodigoBarras().replaceAll("[^a-zA-Z0-9]", "_") + ".jpg";
+        File foto = new File("src/imagenes", nombreFoto);
         if (foto.exists()) {
             return new Image(foto.toURI().toString());
         }
@@ -143,10 +146,10 @@ public class CatalogoController implements Initializable {
 
     private void mostrarDetalle(Vinilo vinilo) {
         if (imgDetalle != null) imgDetalle.setImage(cargarImagenVinilo(vinilo));
-        if (lblDetalleTitulo != null) lblDetalleTitulo.setText(vinilo.getTitulo());
-        if (lblDetalleCodigo != null) lblDetalleCodigo.setText("Código: " + vinilo.getIdVinilo());
+        if (lblDetalleTitulo != null) lblDetalleTitulo.setText(vinilo.getTituloAlbum());
+        if (lblDetalleCodigo != null) lblDetalleCodigo.setText("Código: " + vinilo.getCodigoBarras());
         if (lblDetallePrecio != null) lblDetallePrecio.setText("Precio: $" + String.format("%.2f", vinilo.getPrecio()));
-        if (lblDetalleStock != null) lblDetalleStock.setText("Stock: " + vinilo.getStock());
+        if (lblDetalleStock != null) lblDetalleStock.setText("Stock: " + vinilo.getStockActual());
         
         if (lblDetalleArtista != null) {
             String nombreArtista = (vinilo.getArtista() != null) ? vinilo.getArtista().getNombreArtistico() : "Desconocido";

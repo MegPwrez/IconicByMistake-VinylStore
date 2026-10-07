@@ -16,6 +16,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.StringConverter;
+import org.ibm.Main;
 import org.ibm.dao.DetalleVentaDAO;
 import org.ibm.dao.VentaDAO;
 import org.ibm.dao.ViniloDAO;
@@ -69,6 +70,7 @@ public class DetalleVentaController implements Initializable {
         tablaDetalleVenta.setItems(detallesFiltrados);
         seleccionarFila();
         configurarBusqueda();
+        configurarSeleccionVinilo();
     }
 
     public void configurarTabla() {
@@ -121,6 +123,14 @@ public class DetalleVentaController implements Initializable {
         } catch (Exception e) {
             mostrarError("Error al cargar combos: " + e.getMessage());
         }
+    }
+
+    private void configurarSeleccionVinilo() {
+        cmbVinilo.valueProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null && !Editar) {
+                txtPrecio.setText(String.valueOf(newVal.getPrecio()));
+            }
+        });
     }
 
     private void configurarBusqueda() {
@@ -289,7 +299,7 @@ public class DetalleVentaController implements Initializable {
     @FXML
     private void handleVolver() {
         try {
-            Main.cambiarVista("/org/lsa/view/DashboardCajeroView.fxml");
+            Main.cambiarVista("/org/ibm/view/CajeroDashboardView.fxml");
         } catch (Exception e) {
             mostrarError("Error al volver al menú: " + e.getMessage());
         }

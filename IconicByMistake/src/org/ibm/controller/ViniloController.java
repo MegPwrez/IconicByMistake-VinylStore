@@ -4,9 +4,11 @@ import java.io.File;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.sql.Date;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -29,6 +31,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+
 import org.ibm.dao.ArtistaDAO;
 import org.ibm.dao.GeneroDAO;
 import org.ibm.dao.ProductorDAO;
@@ -39,8 +42,8 @@ import org.ibm.dao.impl.ProductorDAOImpl;
 import org.ibm.dao.impl.ViniloDAOImpl;
 import org.ibm.model.Artista;
 import org.ibm.model.Genero;
-import org.ibm.model.Vinilo;
 import org.ibm.model.Productor;
+import org.ibm.model.Vinilo;
 
 public class ViniloController implements Initializable {
     private static final Logger log = Logger.getLogger(ViniloController.class.getName());
@@ -50,6 +53,7 @@ public class ViniloController implements Initializable {
     @FXML private TextField txtFechaLanzamiento; 
     @FXML private TextField txtPrecio;
     @FXML private TextField txtStock;
+    @FXML private TextField txtStockMinimo; // Opcional en FXML si cuentas con el campo
     @FXML private ComboBox<Artista> cmbArtista; 
     @FXML private ComboBox<Genero> cmbGenero;
     @FXML private ComboBox<Productor> cmbProductor;
@@ -58,7 +62,7 @@ public class ViniloController implements Initializable {
     @FXML private TableView<Vinilo> tablaVinilos;
     @FXML private TableColumn<Vinilo, String> colCodigo;
     @FXML private TableColumn<Vinilo, String> colTitulo;
-    @FXML private TableColumn<Vinilo, String> colFecha; 
+    @FXML private TableColumn<Vinilo, Date> colFecha; 
     @FXML private TableColumn<Vinilo, Double> colPrecio;
     @FXML private TableColumn<Vinilo, Integer> colStock;
     @FXML private TableColumn<Vinilo, String> colArtista;
@@ -98,11 +102,11 @@ public class ViniloController implements Initializable {
     }
 
     public void configurarTabla() {
-        colCodigo.setCellValueFactory(new PropertyValueFactory<>("sku")); 
-        colTitulo.setCellValueFactory(new PropertyValueFactory<>("titulo"));
-        colFecha.setCellValueFactory(new PropertyValueFactory<>("anioLanzamiento")); 
+        colCodigo.setCellValueFactory(new PropertyValueFactory<>("codigoBarras")); 
+        colTitulo.setCellValueFactory(new PropertyValueFactory<>("tituloAlbum"));
+        colFecha.setCellValueFactory(new PropertyValueFactory<>("fechaLanzamiento")); 
         colPrecio.setCellValueFactory(new PropertyValueFactory<>("precio"));
-        colStock.setCellValueFactory(new PropertyValueFactory<>("stock"));
+        colStock.setCellValueFactory(new PropertyValueFactory<>("stockActual"));
         colArtista.setCellValueFactory(new PropertyValueFactory<>("artista"));
         colGenero.setCellValueFactory(new PropertyValueFactory<>("genero"));
         colProductor.setCellValueFactory(new PropertyValueFactory<>("productor"));
@@ -136,10 +140,10 @@ public class ViniloController implements Initializable {
             vinilosFiltrados.setPredicate(p -> true);
         } else {
             vinilosFiltrados.setPredicate(vinilo ->
-                    (vinilo.getSku() != null && vinilo.getSku().toLowerCase().contains(busqueda))
-                    || (vinilo.getTitulo() != null && vinilo.getTitulo().toLowerCase().contains(busqueda))
+                    (vinilo.getCodigoBarras() != null && vinilo.getCodigoBarras().toLowerCase().contains(busqueda))
+                    || (vinilo.getTituloAlbum() != null && vinilo.getTituloAlbum().toLowerCase().contains(busqueda))
                     || String.valueOf(vinilo.getPrecio()).contains(busqueda)
-                    || String.valueOf(vinilo.getStock()).contains(busqueda));
+                    || String.valueOf(vinilo.getStockActual()).contains(busqueda));
         }
     }
 
@@ -147,13 +151,17 @@ public class ViniloController implements Initializable {
         tablaVinilos.getSelectionModel().selectedItemProperty().addListener(
                 (obs, oldSelection, newSelection) -> {
                     if (newSelection != null) {
-                        txtCodigoVinilo.setText(newSelection.getSku());
-                        txtTitulo.setText(newSelection.getTitulo());
+                        txtCodigoVinilo.setText(newSelection.getCodigoBarras());
+                        txtTitulo.setText(newSelection.getTituloAlbum());
                         
-                        txtFechaLanzamiento.setText(newSelection.getAnioLanzamiento() != null ? newSelection.getAnioLanzamiento() : "");
+                        txtFechaLanzamiento.setText(newSelection.getFechaLanzamiento() != null 
+                                ? newSelection.getFechaLanzamiento().toString() : "");
                         
                         txtPrecio.setText(String.valueOf(newSelection.getPrecio()));
-                        txtStock.setText(String.valueOf(newSelection.getStock()));
+                        txtStock.setText(String.valueOf(newSelection.getStockActual()));
+                        if (txtStockMinimo != null) {
+                            txtStockMinimo.setText(String.valueOf(newSelection.getStockMinimo()));
+                        }
                         
                         // Seleccionar Artista en ComboBox
                         cmbArtista.setValue(null);
@@ -170,7 +178,8 @@ public class ViniloController implements Initializable {
                         cmbGenero.setValue(null);
                         if (newSelection.getGenero() != null) {
                             for (Genero genero : cmbGenero.getItems()) {
-                                if (genero.getIdGenero() == newSelection.getGenero().getIdGenero()) {
+                                if (genero.getIdGenero() == newSelection.getIdGenero() || 
+                                   (newSelection.getGenero() != null && genero.getIdGenero() == newSelection.getGenero().getIdGenero())) {
                                     cmbGenero.setValue(genero);
                                     break;
                                 }
@@ -188,18 +197,11 @@ public class ViniloController implements Initializable {
                             }
                         }
 
-                        urlFotoActual = newSelection.getUrlFoto();
+                        // Cargar foto si aplica
+                        urlFotoActual = null; // Si no manejas urlFoto en la clase Vinilo puedes omitirlo
                         archivoFotoSeleccionado = null;
-                        if (urlFotoActual != null && !urlFotoActual.isEmpty()) {
-                            File foto = new File("src", urlFotoActual);
-                            if (foto.exists()) {
-                                imgPortada.setImage(new Image(foto.toURI().toString()));
-                            } else {
-                                imgPortada.setImage(null);
-                            }
-                        } else {
-                            imgPortada.setImage(null);
-                        }
+                        imgPortada.setImage(null);
+
                         desactivarFormulario();
                     }
                 });
@@ -224,12 +226,11 @@ public class ViniloController implements Initializable {
     private void handleGuardar() {
         try {
             if (txtCodigoVinilo.getText().trim().isEmpty() || txtTitulo.getText().trim().isEmpty()) {
-                mostrarAdvertencia("Los campos Código y Título son obligatorios.");
+                mostrarAdvertencia("Los campos Código de Barras y Título de Álbum son obligatorios.");
                 return;
             }
 
             String codigo = txtCodigoVinilo.getText().trim();
-            String urlFoto = urlFotoActual;
             
             if (archivoFotoSeleccionado != null) {
                 String nombreOriginal = archivoFotoSeleccionado.getName();
@@ -240,19 +241,36 @@ public class ViniloController implements Initializable {
                 File destino = new File(DIRECTORIO_FOTOS, nombreFoto);
                 Files.createDirectories(destino.getParentFile().toPath());
                 Files.copy(archivoFotoSeleccionado.toPath(), destino.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                urlFoto = "imagenes/" + nombreFoto;
             }
 
             Vinilo vinilo = new Vinilo();
-            vinilo.setSku(codigo);
-            vinilo.setTitulo(txtTitulo.getText().trim());
-            vinilo.setAnioLanzamiento(txtFechaLanzamiento.getText().trim()); 
+            vinilo.setCodigoBarras(codigo);
+            vinilo.setTituloAlbum(txtTitulo.getText().trim());
+            
+            if (!txtFechaLanzamiento.getText().trim().isEmpty()) {
+                vinilo.setFechaLanzamiento(Date.valueOf(txtFechaLanzamiento.getText().trim()));
+            }
+            
             vinilo.setPrecio(Double.parseDouble(txtPrecio.getText().trim()));
-            vinilo.setStock(Integer.parseInt(txtStock.getText().trim()));
+            vinilo.setStockActual(Integer.parseInt(txtStock.getText().trim()));
+            
+            if (txtStockMinimo != null && !txtStockMinimo.getText().trim().isEmpty()) {
+                vinilo.setStockMinimo(Integer.parseInt(txtStockMinimo.getText().trim()));
+            } else {
+                vinilo.setStockMinimo(0);
+            }
+            
+            vinilo.setActivo(true);
+
+            // Relaciones
             vinilo.setArtista(cmbArtista.getValue());
-            vinilo.setGenero(cmbGenero.getValue());
+            
+            if (cmbGenero.getValue() != null) {
+                vinilo.setGenero(cmbGenero.getValue());
+                vinilo.setIdGenero(cmbGenero.getValue().getIdGenero());
+            }
+
             vinilo.setProductor(cmbProductor.getValue());
-            vinilo.setUrlFoto(urlFoto);
 
             boolean guardado;
             if (modoEdicion) {
@@ -273,8 +291,8 @@ public class ViniloController implements Initializable {
             } else {
                 mostrarError("No se pudo guardar el vinilo.");
             }
-        } catch (NumberFormatException e) {
-            mostrarAdvertencia("Verifique que los campos numéricos (precio, stock) sean válidos.");
+        } catch (IllegalArgumentException e) {
+            mostrarAdvertencia("El formato de fecha debe ser YYYY-MM-DD.");
         } catch (Exception e) {
             mostrarError("Error al guardar: " + e.getMessage());
         }
@@ -341,6 +359,7 @@ public class ViniloController implements Initializable {
         txtFechaLanzamiento.clear();
         txtPrecio.clear();
         txtStock.clear();
+        if (txtStockMinimo != null) txtStockMinimo.clear();
         cmbArtista.setValue(null);
         cmbGenero.setValue(null);
         cmbProductor.setValue(null);
@@ -355,6 +374,7 @@ public class ViniloController implements Initializable {
         txtFechaLanzamiento.setDisable(false);
         txtPrecio.setDisable(false);
         txtStock.setDisable(false);
+        if (txtStockMinimo != null) txtStockMinimo.setDisable(false);
         cmbArtista.setDisable(false);
         cmbGenero.setDisable(false);
         cmbProductor.setDisable(false);
@@ -367,6 +387,7 @@ public class ViniloController implements Initializable {
         txtFechaLanzamiento.setDisable(true);
         txtPrecio.setDisable(true);
         txtStock.setDisable(true);
+        if (txtStockMinimo != null) txtStockMinimo.setDisable(true);
         cmbArtista.setDisable(true);
         cmbGenero.setDisable(true);
         cmbProductor.setDisable(true);

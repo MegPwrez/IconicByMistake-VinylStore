@@ -18,6 +18,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.StringConverter;
+import org.ibm.Main;
+import org.ibm.Ventaservice.VentaService;
 import org.ibm.dao.ClienteDAO;
 import org.ibm.dao.ViniloDAO;
 import org.ibm.dao.impl.ClienteDAOImpl;
@@ -28,8 +30,6 @@ import org.ibm.model.DetalleVenta;
 import org.ibm.model.Usuario;
 import org.ibm.model.Venta;
 import org.ibm.model.Vinilo;
-import org.ibm.service.VentaService;
-import org.ibm.Main;
 import org.ibm.utils.SesionUsuario;
 
 public class NuevaVentaController implements Initializable {
@@ -48,7 +48,7 @@ public class NuevaVentaController implements Initializable {
     @FXML private TableColumn<DetalleVenta, String> colTitulo;
     @FXML private TableColumn<DetalleVenta, Double> colPrecio;
     @FXML private TableColumn<DetalleVenta, Integer> colCantidad;
-    @FXML private TableColumn<DetalleVenta, Double> colSubtotal;
+    @FXML private TableColumn<DetalleVenta, Double> colsubtotal;
     @FXML private Label lblTotal;
     @FXML private Label lblMensaje;
 
@@ -103,7 +103,7 @@ public class NuevaVentaController implements Initializable {
         colTitulo.setCellValueFactory(new PropertyValueFactory<>("tituloAlbum"));
         colPrecio.setCellValueFactory(new PropertyValueFactory<>("precioUnitario"));
         colCantidad.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
-        colSubtotal.setCellValueFactory(new PropertyValueFactory<>("subTotal"));
+        colsubtotal.setCellValueFactory(new PropertyValueFactory<>("subTotal"));
     }
 
     private void configurarSpinner() {
@@ -113,7 +113,7 @@ public class NuevaVentaController implements Initializable {
     private double calcularTotal() {
         double total = 0;
         for (DetalleVenta linea : lineasVenta) {
-            total += linea.getsubTotal();
+            total += linea.getSubTotal(); // Corregido: .getSubTotal()
         }
         lblTotal.setText(String.format("Total: Q%.2f", total));
         return total;
@@ -141,10 +141,17 @@ public class NuevaVentaController implements Initializable {
             mostrarAdvertencia("Stock insuficiente. Disponible: " + vinilo.getStockActual() + ".");
             return;
         }
+        
         if (itemExistente != null) {
-            itemExistente.setCantidad(cantidadAcumulada + cantidadNueva);
-            itemExistente.setSubTotal((cantidadAcumulada + cantidadNueva) * itemExistente.getPrecioUnitario());
-            tablaLineas.refresh();
+            lineasVenta.remove(itemExistente);
+            int nuevaCantidadTotal = cantidadAcumulada + cantidadNueva;
+            DetalleVenta itemActualizado = new DetalleVenta(
+                vinilo.getCodigoBarras(),
+                vinilo.getTituloAlbum(),
+                vinilo.getPrecio(),
+                nuevaCantidadTotal
+            );
+            lineasVenta.add(itemActualizado);
         } else {
             DetalleVenta nuevoItem = new DetalleVenta(
                 vinilo.getCodigoBarras(),
@@ -204,24 +211,22 @@ public class NuevaVentaController implements Initializable {
             nuevaVenta.setTotalVenta(totalCalculado);
             nuevaVenta.setCuiCliente(cuiCliente);
             nuevaVenta.setId_usuario(idUsuario);
-
+            
             boolean exito = ventaService.procesarVenta(nuevaVenta, lineasVenta);
-
             if (!exito) {
                 mostrarError("No se pudo registrar la venta. Verifique el stock.");
                 return;
             }
             int idVentaGenerada = nuevaVenta.getIdVenta();
-            FacturaController.setNoVentaSeleccionada(idVentaGenerada);
             limpiarVenta();
             cargarCombos();
-            Main.cambiarVista("/org/ibm/view/FacturaImpresaView.fxml");
 
+            mostrarInformacion("Venta #" + idVentaGenerada + " registrada exitosamente.");
         } catch (ValidacionException e) {
             mostrarAdvertencia(e.getMessage());
             lblMensaje.setText(e.getMessage());
         } catch (Exception e) {
-            mostrarError("Error al registrar la venta y redirigir: " + e.getMessage());
+            mostrarError("Error al registrar la venta: " + e.getMessage());
         }
     }
 
@@ -236,7 +241,7 @@ public class NuevaVentaController implements Initializable {
     @FXML
     public void handleVolver(ActionEvent event) {
         try {
-            Main.cambiarVista("/org/ibm/view/DashboardCajeroView.fxml");
+            Main.cambiarVista("/org/ibm/view/CajeroDashboardView.fxml");
         } catch (Exception e) {
             mostrarError("Error al volver al menú: " + e.getMessage());
         }
@@ -253,6 +258,14 @@ public class NuevaVentaController implements Initializable {
     private void mostrarAdvertencia(String mensaje) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("Advertencia");
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje);
+        alert.showAndWait();
+    }
+
+    private void mostrarInformacion(String mensaje) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Éxito");
         alert.setHeaderText(null);
         alert.setContentText(mensaje);
         alert.showAndWait();

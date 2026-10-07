@@ -74,7 +74,7 @@ public class VentaService {
                     csDetalle.setString(2, det.getCodigoBarras());
                     csDetalle.setInt(3, det.getCantidad());
                     csDetalle.setDouble(4, det.getPrecioUnitario());
-                    csDetalle.setDouble(5, det.getsubTotal());
+                    csDetalle.setDouble(5, det.getSubTotal());
                     csDetalle.executeUpdate();
                 }
             }

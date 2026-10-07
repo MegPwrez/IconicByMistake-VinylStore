@@ -1,10 +1,6 @@
-
 package org.ibm.model;
 
-
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Venta {
 
@@ -31,7 +27,6 @@ public class Venta {
         this.id_usuario = id_usuario;
     }
 
- 
     public int getIdVenta() {
         return idVenta;
     }
@@ -95,16 +90,17 @@ public class Venta {
     public void setId_usuario(int id_usuario) {
         this.id_usuario = id_usuario;
     }
- 
-      @Override
+
+    @Override
     public String toString() {
-        return "ventas{" +
-                "id_venta=" + idVenta +
-                ", fecha_venta=" + fechaVenta +
-                ", descuento=" + subTotal +
-                ", cui_Cliente=" + cuiCliente +
-                 ", estado=" + estado +
-                 ", cui_Cliente=" + cuiCliente +
+        return "Venta{" +
+                "idVenta=" + idVenta +
+                ", fechaVenta=" + fechaVenta +
+                ", subTotal='" + subTotal + '\'' +
+                ", descuento=" + descuento +
+                ", totalVenta=" + totalVenta +
+                ", cuiCliente=" + cuiCliente +
+                ", estado='" + estado + '\'' +
                 ", id_usuario=" + id_usuario +
                 '}';
     }

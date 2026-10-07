@@ -65,11 +65,11 @@ public class LoginController {
         switch (rol) {
             case "admin":
             case "administrador":
-                fxmlPath = "/org/lsa/imb/DashboardAdminView.fxml";
+                fxmlPath = "/org/lsa/ibm/DashboardAdminView.fxml";
                 tituloVentana = "Librería Saturno - Panel de Administración";
                 break;
             case "cajero":
-                fxmlPath = "/org/imb/view/DashboardCajeroView.fxml";
+                fxmlPath = "/org/ibm/view/CajeroDashboardView.fxml";
                 tituloVentana = "Librería Saturno - Módulo de Ventas";
                 break;
             case "empleado":
