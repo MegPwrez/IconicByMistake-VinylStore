@@ -1,0 +1,129 @@
+.root {
+    -fx-font-family: "Segoe UI";
+}
+
+.content {
+    -fx-background-color: #F0F5F3;
+}
+
+.sidebar {
+    -fx-background-color: #071A09;
+}
+
+.logo {
+    -fx-text-fill: #F0F5F3;
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+}
+
+.logo-subtitle {
+    -fx-text-fill: #9BBABA;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.menu-title {
+    -fx-text-fill: #8FB5A1;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.menu-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #F0F5F3;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 12px 14px;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+}
+
+.menu-button:hover {
+    -fx-background-color: #386646;
+}
+
+.logout-button {
+    -fx-background-color: #386646;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 12px;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+}
+
+.logout-button:hover {
+    -fx-background-color: #1E8A35;
+}
+
+.page-title {
+    -fx-text-fill: #071A09;
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+}
+
+.role-label {
+    -fx-text-fill: #658273;
+    -fx-font-size: 14px;
+}
+
+.section-title {
+    -fx-text-fill: #386646;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.stat-card,
+.action-card {
+    -fx-background-color: white;
+    -fx-background-radius: 12px;
+    -fx-padding: 22px;
+    -fx-border-color: #9BBABA;
+    -fx-border-radius: 12px;
+    -fx-border-width: 1px;
+}
+
+.stat-title {
+    -fx-text-fill: #658273;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.stat-value {
+    -fx-text-fill: #1E8A35;
+    -fx-font-size: 27px;
+    -fx-font-weight: bold;
+}
+
+.stat-value-small {
+    -fx-text-fill: #1E8A35;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+
+.stat-description {
+    -fx-text-fill: #658273;
+    -fx-font-size: 12px;
+}
+
+.action-title {
+    -fx-text-fill: #071A09;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.action-description {
+    -fx-text-fill: #658273;
+    -fx-font-size: 13px;
+}
+
+.primary-button {
+    -fx-background-color: #55AB66;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 10px 15px;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+}
+
+.primary-button:hover {
+    -fx-background-color: #1E8A35;
+}

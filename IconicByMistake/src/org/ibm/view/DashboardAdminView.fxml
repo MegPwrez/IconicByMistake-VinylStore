@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane prefHeight="700.0"
+            prefWidth="1100.0"
+            stylesheets="@style/dashboardadmin.css"
+            xmlns="http://javafx.com/javafx/8.0.171"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.ibm.controller.DashboardAdminController">
+
+    <!-- MENÚ LATERAL -->
+    <left>
+        <VBox prefWidth="230.0"
+              spacing="12.0"
+              styleClass="sidebar">
+
+            <padding>
+                <Insets bottom="25.0" left="20.0" right="20.0" top="30.0"/>
+            </padding>
+
+            <Label text="ICONIC"
+                   styleClass="logo"/>
+
+            <Label text="BY MISTAKE"
+                   styleClass="logo-subtitle"/>
+
+            <Region prefHeight="35.0"/>
+
+            <Label text="ADMINISTRACIÓN"
+                   styleClass="menu-title"/>
+
+            <Button fx:id="btnUsuarios"
+                    maxWidth="Infinity"
+                    onAction="#irAUsuarios"
+                    styleClass="menu-button"
+                    text="Gestión de usuarios"/>
+
+            <Button fx:id="btnReportes"
+                    maxWidth="Infinity"
+                    onAction="#irAReportes"
+                    styleClass="menu-button"
+                    text="Reportes"/>
+
+            <Button fx:id="btnCatalogo"
+                    maxWidth="Infinity"
+                    onAction="#irACatalogo"
+                    styleClass="menu-button"
+                    text="Catálogo"/>
+
+            <Region VBox.vgrow="ALWAYS"/>
+
+            <Button fx:id="btnCerrarSesion"
+                    maxWidth="Infinity"
+                    onAction="#cerrarSesion"
+                    styleClass="logout-button"
+                    text="Cerrar sesión"/>
+
+        </VBox>
+    </left>
+
+    <!-- CONTENIDO -->
+    <center>
+        <VBox spacing="25.0"
+              styleClass="content">
+
+            <padding>
+                <Insets bottom="35.0" left="40.0" right="40.0" top="35.0"/>
+            </padding>
+
+            <HBox alignment="CENTER_LEFT"
+                  spacing="15.0">
+
+                <VBox spacing="5.0">
+                    <Label fx:id="lblBienvenida"
+                           text="Panel de Administración"
+                           styleClass="page-title"/>
+
+                    <Label fx:id="lblRol"
+                           text="Administrador"
+                           styleClass="role-label"/>
+                </VBox>
+
+            </HBox>
+
+            <Label text="Resumen general"
+                   styleClass="section-title"/>
+
+            <!-- INDICADORES -->
+            <HBox spacing="20.0">
+
+                <VBox prefWidth="240.0"
+                      spacing="10.0"
+                      styleClass="stat-card">
+
+                    <Label text="VENTAS DE HOY"
+                           styleClass="stat-title"/>
+
+                    <Label fx:id="lblVentasDia"
+                           text="Q0.00"
+                           styleClass="stat-value"/>
+
+                    <Label text="Total vendido durante el día"
+                           styleClass="stat-description"/>
+
+                </VBox>
+
+                <VBox prefWidth="240.0"
+                      spacing="10.0"
+                      styleClass="stat-card">
+
+                    <Label text="VENTAS DEL MES"
+                           styleClass="stat-title"/>
+
+                    <Label fx:id="lblVentasMes"
+                           text="Q0.00"
+                           styleClass="stat-value"/>
+
+                    <Label text="Total acumulado del mes"
+                           styleClass="stat-description"/>
+
+                </VBox>
+
+                <VBox prefWidth="240.0"
+                      spacing="10.0"
+                      styleClass="stat-card">
+
+                    <Label text="MÁS VENDIDO"
+                           styleClass="stat-title"/>
+
+                    <Label fx:id="lblViniloMasVendido"
+                           text="Sin datos"
+                           styleClass="stat-value-small"/>
+
+                    <Label text="Vinilo con mayor cantidad de ventas"
+                           styleClass="stat-description"
+                           wrapText="true"/>
+
+                </VBox>
+
+            </HBox>
+
+            <Label text="Accesos rápidos"
+                   styleClass="section-title"/>
+
+            <HBox spacing="20.0">
+
+                <VBox prefWidth="240.0"
+                      spacing="10.0"
+                      styleClass="action-card">
+
+                    <Label text="Usuarios"
+                           styleClass="action-title"/>
+
+                    <Label text="Administrar usuarios y roles del sistema."
+                           styleClass="action-description"
+                           wrapText="true"/>
+
+                    <Button maxWidth="Infinity"
+                            onAction="#irAUsuarios"
+                            styleClass="primary-button"
+                            text="Administrar"/>
+
+                </VBox>
+
+                <VBox prefWidth="240.0"
+                      spacing="10.0"
+                      styleClass="action-card">
+
+                    <Label text="Reportes"
+                           styleClass="action-title"/>
+
+                    <Label text="Consultar ventas e indicadores."
+                           styleClass="action-description"
+                           wrapText="true"/>
+
+                    <Button maxWidth="Infinity"
+                            onAction="#irAReportes"
+                            styleClass="primary-button"
+                            text="Ver reportes"/>
+
+                </VBox>
+
+                <VBox prefWidth="240.0"
+                      spacing="10.0"
+                      styleClass="action-card">
+
+                    <Label text="Catálogo"
+                           styleClass="action-title"/>
+
+                    <Label text="Consultar el catálogo general de vinilos."
+                           styleClass="action-description"
+                           wrapText="true"/>
+
+                    <Button maxWidth="Infinity"
+                            onAction="#irACatalogo"
+                            styleClass="primary-button"
+                            text="Ver catálogo"/>
+
+                </VBox>
+
+            </HBox>
+
+        </VBox>
+    </center>
+
+</BorderPane>
