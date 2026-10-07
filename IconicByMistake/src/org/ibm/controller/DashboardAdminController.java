@@ -20,30 +20,24 @@ public class DashboardAdminController implements Initializable {
 
     @FXML
     private Label lblBienvenida;
-
     @FXML
     private Label lblRol;
-
     @FXML
     private Label lblVentasDia;
-
     @FXML
     private Label lblVentasMes;
-
     @FXML
     private Label lblViniloMasVendido;
-
     @FXML
     private Button btnUsuarios;
-
     @FXML
     private Button btnReportes;
-
     @FXML
     private Button btnCatalogo;
-
     @FXML
     private Button btnCerrarSesion;
+    @FXML
+    private Button btnCambiarContrasena;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -85,6 +79,14 @@ public class DashboardAdminController implements Initializable {
         cambiarVista(
                 "/org/ibm/view/LoginView.fxml",
                 "Iconic By Mistake - Inicio de Sesión"
+        );
+    }
+    
+    @FXML
+    private void irACambiarContrasena() {
+    cambiarVista(
+            "/org/ibm/view/CambioContrasenaView.fxml",
+            "Iconic By Mistake - Cambiar contraseña"
         );
     }
 

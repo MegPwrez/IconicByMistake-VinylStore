@@ -22,7 +22,10 @@
               styleClass="sidebar">
 
             <padding>
-                <Insets bottom="25.0" left="20.0" right="20.0" top="30.0"/>
+                <Insets bottom="25.0"
+                        left="20.0"
+                        right="20.0"
+                        top="30.0"/>
             </padding>
 
             <Label text="ICONIC"
@@ -56,6 +59,14 @@
 
             <Region VBox.vgrow="ALWAYS"/>
 
+            <!-- CAMBIO DE CONTRASEÑA -->
+            <Button fx:id="btnCambiarContrasena"
+                    maxWidth="Infinity"
+                    onAction="#irACambiarContrasena"
+                    styleClass="menu-button"
+                    text="Cambiar contraseña"/>
+
+            <!-- CERRAR SESIÓN -->
             <Button fx:id="btnCerrarSesion"
                     maxWidth="Infinity"
                     onAction="#cerrarSesion"
@@ -71,13 +82,17 @@
               styleClass="content">
 
             <padding>
-                <Insets bottom="35.0" left="40.0" right="40.0" top="35.0"/>
+                <Insets bottom="35.0"
+                        left="40.0"
+                        right="40.0"
+                        top="35.0"/>
             </padding>
 
             <HBox alignment="CENTER_LEFT"
                   spacing="15.0">
 
                 <VBox spacing="5.0">
+
                     <Label fx:id="lblBienvenida"
                            text="Panel de Administración"
                            styleClass="page-title"/>
@@ -85,6 +100,7 @@
                     <Label fx:id="lblRol"
                            text="Administrador"
                            styleClass="role-label"/>
+
                 </VBox>
 
             </HBox>
@@ -149,6 +165,7 @@
             <Label text="Accesos rápidos"
                    styleClass="section-title"/>
 
+            <!-- ACCESOS RÁPIDOS -->
             <HBox spacing="20.0">
 
                 <VBox prefWidth="240.0"
