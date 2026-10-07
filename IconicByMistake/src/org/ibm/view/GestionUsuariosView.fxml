@@ -30,7 +30,10 @@
               AnchorPane.topAnchor="0.0">
 
             <padding>
-                <Insets bottom="25.0" left="20.0" right="20.0" top="30.0"/>
+                <Insets bottom="25.0"
+                        left="20.0"
+                        right="20.0"
+                        top="30.0"/>
             </padding>
 
             <children>
@@ -38,25 +41,36 @@
                 <Label text="ICONIC BY&#10;MISTAKE"
                        textFill="WHITE">
                     <font>
-                        <Font name="Century Gothic Bold" size="22.0"/>
+                        <Font name="Century Gothic Bold"
+                              size="22.0"/>
                     </font>
                 </Label>
 
                 <Label text="Administración"
                        textFill="#9BBABA">
                     <font>
-                        <Font name="Century Gothic" size="13.0"/>
+                        <Font name="Century Gothic"
+                              size="13.0"/>
                     </font>
                 </Label>
 
                 <Label text="Gestión de Usuarios"
                        styleClass="menu-activo"/>
 
+                <!-- Empuja el botón hacia la parte inferior -->
+                <VBox VBox.vgrow="ALWAYS"/>
+
+                <Button fx:id="btnVolver"
+                        text="←  Volver al panel"
+                        onAction="#volverAlDashboard"
+                        maxWidth="1.7976931348623157E308"
+                        styleClass="btn-volver"/>
+
             </children>
 
         </VBox>
 
-        <!-- CONTENIDO -->
+        <!-- CONTENIDO PRINCIPAL -->
         <VBox spacing="18.0"
               AnchorPane.bottomAnchor="25.0"
               AnchorPane.leftAnchor="250.0"
@@ -68,22 +82,28 @@
                 <Label text="Gestión de Usuarios"
                        textFill="#071A09">
                     <font>
-                        <Font name="Century Gothic Bold" size="28.0"/>
+                        <Font name="Century Gothic Bold"
+                              size="28.0"/>
                     </font>
                 </Label>
 
                 <Label text="Administra los usuarios, roles y estados del sistema."
                        textFill="#658273">
                     <font>
-                        <Font name="Century Gothic" size="13.0"/>
+                        <Font name="Century Gothic"
+                              size="13.0"/>
                     </font>
                 </Label>
 
                 <!-- FORMULARIO -->
-                <VBox spacing="14.0" styleClass="card">
+                <VBox spacing="14.0"
+                      styleClass="card">
 
                     <padding>
-                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+                        <Insets bottom="20.0"
+                                left="20.0"
+                                right="20.0"
+                                top="20.0"/>
                     </padding>
 
                     <children>
@@ -91,84 +111,130 @@
                         <Label text="Datos del usuario"
                                textFill="#071A09">
                             <font>
-                                <Font name="Century Gothic Bold" size="17.0"/>
+                                <Font name="Century Gothic Bold"
+                                      size="17.0"/>
                             </font>
                         </Label>
 
+                        <!-- PRIMERA FILA -->
                         <HBox spacing="15.0">
 
                             <children>
 
-                                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                                <VBox spacing="5.0"
+                                      HBox.hgrow="ALWAYS">
+
                                     <children>
+
                                         <Label text="Usuario"/>
+
                                         <TextField fx:id="txtUsuario"
                                                    promptText="Nombre de usuario"/>
+
                                     </children>
+
                                 </VBox>
 
-                                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                                <VBox spacing="5.0"
+                                      HBox.hgrow="ALWAYS">
+
                                     <children>
+
                                         <Label text="Nombre"/>
+
                                         <TextField fx:id="txtNombre"
                                                    promptText="Nombre"/>
+
                                     </children>
+
                                 </VBox>
 
-                                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                                <VBox spacing="5.0"
+                                      HBox.hgrow="ALWAYS">
+
                                     <children>
+
                                         <Label text="Apellido"/>
+
                                         <TextField fx:id="txtApellido"
                                                    promptText="Apellido"/>
+
                                     </children>
+
                                 </VBox>
 
                             </children>
 
                         </HBox>
 
+                        <!-- SEGUNDA FILA -->
                         <HBox spacing="15.0">
 
                             <children>
 
-                                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                                <VBox spacing="5.0"
+                                      HBox.hgrow="ALWAYS">
+
                                     <children>
+
                                         <Label text="Correo"/>
+
                                         <TextField fx:id="txtCorreo"
                                                    promptText="correo@ejemplo.com"/>
+
                                     </children>
+
                                 </VBox>
 
-                                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                                <VBox spacing="5.0"
+                                      HBox.hgrow="ALWAYS">
+
                                     <children>
+
                                         <Label text="Contraseña"/>
+
                                         <PasswordField fx:id="txtContrasena"
                                                        promptText="Contraseña"/>
+
                                     </children>
+
                                 </VBox>
 
-                                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                                <VBox spacing="5.0"
+                                      HBox.hgrow="ALWAYS">
+
                                     <children>
+
                                         <Label text="Rol"/>
+
                                         <ComboBox fx:id="cbRol"
                                                   maxWidth="1.7976931348623157E308"
                                                   promptText="Seleccione"/>
+
                                     </children>
+
                                 </VBox>
 
-                                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                                <VBox spacing="5.0"
+                                      HBox.hgrow="ALWAYS">
+
                                     <children>
+
                                         <Label text="Estado"/>
+
                                         <ComboBox fx:id="cbEstado"
                                                   maxWidth="1.7976931348623157E308"
                                                   promptText="Seleccione"/>
+
                                     </children>
+
                                 </VBox>
 
                             </children>
 
                         </HBox>
 
+                        <!-- BOTONES CRUD -->
                         <HBox spacing="10.0">
 
                             <children>
@@ -201,20 +267,28 @@
 
                 </VBox>
 
-                <!-- TABLA -->
-                <VBox spacing="12.0" styleClass="card" VBox.vgrow="ALWAYS">
+                <!-- TABLA DE USUARIOS -->
+                <VBox spacing="12.0"
+                      styleClass="card"
+                      VBox.vgrow="ALWAYS">
 
                     <padding>
-                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+                        <Insets bottom="20.0"
+                                left="20.0"
+                                right="20.0"
+                                top="20.0"/>
                     </padding>
 
                     <children>
 
                         <Label text="Usuarios registrados"
                                textFill="#071A09">
+
                             <font>
-                                <Font name="Century Gothic Bold" size="17.0"/>
+                                <Font name="Century Gothic Bold"
+                                      size="17.0"/>
                             </font>
+
                         </Label>
 
                         <TableView fx:id="tblUsuarios"

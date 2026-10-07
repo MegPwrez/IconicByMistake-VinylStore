@@ -1,11 +1,16 @@
 package org.ibm.controller;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -14,6 +19,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Stage;
+
 import org.ibm.dao.UsuarioDAO;
 import org.ibm.dao.impl.UsuarioDAOImpl;
 import org.ibm.model.Usuario;
@@ -54,6 +61,9 @@ public class GestionUsuariosController implements Initializable {
     private Button btnLimpiar;
 
     @FXML
+    private Button btnVolver;
+
+    @FXML
     private TableView<Usuario> tblUsuarios;
 
     @FXML
@@ -83,6 +93,7 @@ public class GestionUsuariosController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+
         usuarioDAO = new UsuarioDAOImpl();
 
         cbRol.setItems(FXCollections.observableArrayList(
@@ -99,26 +110,49 @@ public class GestionUsuariosController implements Initializable {
         configurarTabla();
         cargarUsuarios();
 
-        tblUsuarios.getSelectionModel().selectedItemProperty().addListener(
-                (observable, anterior, seleccionado) -> {
+        tblUsuarios.getSelectionModel()
+                .selectedItemProperty()
+                .addListener((observable, anterior, seleccionado) -> {
+
                     if (seleccionado != null) {
                         cargarUsuarioSeleccionado(seleccionado);
                     }
-                }
-        );
+                });
     }
 
     private void configurarTabla() {
-        colId.setCellValueFactory(new PropertyValueFactory<>("idUsuario"));
-        colUsuario.setCellValueFactory(new PropertyValueFactory<>("nombreUsuario"));
-        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
-        colApellido.setCellValueFactory(new PropertyValueFactory<>("apellido"));
-        colCorreo.setCellValueFactory(new PropertyValueFactory<>("correo"));
-        colRol.setCellValueFactory(new PropertyValueFactory<>("rol"));
-        colEstado.setCellValueFactory(new PropertyValueFactory<>("estado"));
+
+        colId.setCellValueFactory(
+                new PropertyValueFactory<>("idUsuario")
+        );
+
+        colUsuario.setCellValueFactory(
+                new PropertyValueFactory<>("nombreUsuario")
+        );
+
+        colNombre.setCellValueFactory(
+                new PropertyValueFactory<>("nombre")
+        );
+
+        colApellido.setCellValueFactory(
+                new PropertyValueFactory<>("apellido")
+        );
+
+        colCorreo.setCellValueFactory(
+                new PropertyValueFactory<>("correo")
+        );
+
+        colRol.setCellValueFactory(
+                new PropertyValueFactory<>("rol")
+        );
+
+        colEstado.setCellValueFactory(
+                new PropertyValueFactory<>("estado")
+        );
     }
 
     private void cargarUsuarios() {
+
         listaUsuarios = FXCollections.observableArrayList(
                 usuarioDAO.listarTodos()
         );
@@ -127,12 +161,14 @@ public class GestionUsuariosController implements Initializable {
     }
 
     private void cargarUsuarioSeleccionado(Usuario usuario) {
+
         usuarioSeleccionado = usuario;
 
         txtUsuario.setText(usuario.getNombreUsuario());
         txtNombre.setText(usuario.getNombre());
         txtApellido.setText(usuario.getApellido());
         txtCorreo.setText(usuario.getCorreo());
+
         txtContrasena.clear();
 
         cbRol.setValue(usuario.getRol());
@@ -146,21 +182,43 @@ public class GestionUsuariosController implements Initializable {
 
     @FXML
     private void guardarUsuario() {
+
         if (!validarCampos(true)) {
             return;
         }
 
         Usuario usuario = new Usuario();
 
-        usuario.setNombreUsuario(txtUsuario.getText().trim());
-        usuario.setNombre(txtNombre.getText().trim());
-        usuario.setApellido(txtApellido.getText().trim());
-        usuario.setCorreo(txtCorreo.getText().trim());
-        usuario.setContraseña(txtContrasena.getText());
-        usuario.setRol(cbRol.getValue());
-        usuario.setEstado(cbEstado.getValue().equals("Activo"));
+        usuario.setNombreUsuario(
+                txtUsuario.getText().trim()
+        );
+
+        usuario.setNombre(
+                txtNombre.getText().trim()
+        );
+
+        usuario.setApellido(
+                txtApellido.getText().trim()
+        );
+
+        usuario.setCorreo(
+                txtCorreo.getText().trim()
+        );
+
+        usuario.setContraseña(
+                txtContrasena.getText()
+        );
+
+        usuario.setRol(
+                cbRol.getValue()
+        );
+
+        usuario.setEstado(
+                cbEstado.getValue().equals("Activo")
+        );
 
         if (usuarioDAO.insertar(usuario)) {
+
             mostrarAlerta(
                     Alert.AlertType.INFORMATION,
                     "Usuario registrado",
@@ -169,7 +227,9 @@ public class GestionUsuariosController implements Initializable {
 
             cargarUsuarios();
             limpiarCampos();
+
         } else {
+
             mostrarAlerta(
                     Alert.AlertType.ERROR,
                     "Error",
@@ -180,12 +240,15 @@ public class GestionUsuariosController implements Initializable {
 
     @FXML
     private void actualizarUsuario() {
+
         if (usuarioSeleccionado == null) {
+
             mostrarAlerta(
                     Alert.AlertType.WARNING,
                     "Usuario no seleccionado",
                     "Seleccione un usuario para actualizar."
             );
+
             return;
         }
 
@@ -193,14 +256,32 @@ public class GestionUsuariosController implements Initializable {
             return;
         }
 
-        usuarioSeleccionado.setNombreUsuario(txtUsuario.getText().trim());
-        usuarioSeleccionado.setNombre(txtNombre.getText().trim());
-        usuarioSeleccionado.setApellido(txtApellido.getText().trim());
-        usuarioSeleccionado.setCorreo(txtCorreo.getText().trim());
-        usuarioSeleccionado.setRol(cbRol.getValue());
-        usuarioSeleccionado.setEstado(cbEstado.getValue().equals("Activo"));
+        usuarioSeleccionado.setNombreUsuario(
+                txtUsuario.getText().trim()
+        );
+
+        usuarioSeleccionado.setNombre(
+                txtNombre.getText().trim()
+        );
+
+        usuarioSeleccionado.setApellido(
+                txtApellido.getText().trim()
+        );
+
+        usuarioSeleccionado.setCorreo(
+                txtCorreo.getText().trim()
+        );
+
+        usuarioSeleccionado.setRol(
+                cbRol.getValue()
+        );
+
+        usuarioSeleccionado.setEstado(
+                cbEstado.getValue().equals("Activo")
+        );
 
         if (usuarioDAO.actualizar(usuarioSeleccionado)) {
+
             mostrarAlerta(
                     Alert.AlertType.INFORMATION,
                     "Usuario actualizado",
@@ -209,7 +290,9 @@ public class GestionUsuariosController implements Initializable {
 
             cargarUsuarios();
             limpiarCampos();
+
         } else {
+
             mostrarAlerta(
                     Alert.AlertType.ERROR,
                     "Error",
@@ -220,16 +303,22 @@ public class GestionUsuariosController implements Initializable {
 
     @FXML
     private void eliminarUsuario() {
+
         if (usuarioSeleccionado == null) {
+
             mostrarAlerta(
                     Alert.AlertType.WARNING,
                     "Usuario no seleccionado",
                     "Seleccione un usuario para eliminar."
             );
+
             return;
         }
 
-        if (usuarioDAO.eliminar(usuarioSeleccionado.getIdUsuario())) {
+        if (usuarioDAO.eliminar(
+                usuarioSeleccionado.getIdUsuario()
+        )) {
+
             mostrarAlerta(
                     Alert.AlertType.INFORMATION,
                     "Usuario eliminado",
@@ -238,7 +327,9 @@ public class GestionUsuariosController implements Initializable {
 
             cargarUsuarios();
             limpiarCampos();
+
         } else {
+
             mostrarAlerta(
                     Alert.AlertType.ERROR,
                     "Error",
@@ -249,6 +340,7 @@ public class GestionUsuariosController implements Initializable {
 
     @FXML
     private void limpiarCampos() {
+
         usuarioSeleccionado = null;
 
         txtUsuario.clear();
@@ -260,10 +352,49 @@ public class GestionUsuariosController implements Initializable {
         cbRol.setValue(null);
         cbEstado.setValue(null);
 
-        tblUsuarios.getSelectionModel().clearSelection();
+        tblUsuarios.getSelectionModel()
+                .clearSelection();
+    }
+
+    @FXML
+    private void volverAlDashboard() {
+
+        try {
+
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource(
+                            "/org/ibm/view/DashboardAdminView.fxml"
+                    )
+            );
+
+            Parent root = loader.load();
+
+            Stage stage = (Stage) btnVolver
+                    .getScene()
+                    .getWindow();
+
+            stage.setScene(new Scene(root));
+            stage.setTitle(
+                    "Iconic By Mistake - Panel de Administración"
+            );
+
+            stage.centerOnScreen();
+            stage.show();
+
+        } catch (IOException | NullPointerException e) {
+
+            mostrarAlerta(
+                    Alert.AlertType.ERROR,
+                    "Error",
+                    "No se pudo regresar al panel de administración."
+            );
+
+            e.printStackTrace();
+        }
     }
 
     private boolean validarCampos(boolean validarContrasena) {
+
         if (txtUsuario.getText().trim().isEmpty()
                 || txtNombre.getText().trim().isEmpty()
                 || txtApellido.getText().trim().isEmpty()
@@ -280,7 +411,9 @@ public class GestionUsuariosController implements Initializable {
             return false;
         }
 
-        if (validarContrasena && txtContrasena.getText().isEmpty()) {
+        if (validarContrasena
+                && txtContrasena.getText().isEmpty()) {
+
             mostrarAlerta(
                     Alert.AlertType.WARNING,
                     "Contraseña requerida",
@@ -293,11 +426,18 @@ public class GestionUsuariosController implements Initializable {
         return true;
     }
 
-    private void mostrarAlerta(Alert.AlertType tipo, String titulo, String mensaje) {
+    private void mostrarAlerta(
+            Alert.AlertType tipo,
+            String titulo,
+            String mensaje
+    ) {
+
         Alert alerta = new Alert(tipo);
+
         alerta.setTitle(titulo);
         alerta.setHeaderText(null);
         alerta.setContentText(mensaje);
+
         alerta.showAndWait();
     }
 }
