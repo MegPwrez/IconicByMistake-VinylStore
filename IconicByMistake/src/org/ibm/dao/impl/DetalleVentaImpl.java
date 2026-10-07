@@ -1,4 +1,3 @@
-
 package org.ibm.dao.impl;
 
 import org.ibm.dao.DetalleVentaDAO;
@@ -8,11 +7,13 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DetalleVentaImpl implements DetalleVentaDAO {
 
+    @Override
     public boolean insertar(DetalleVenta detalleVenta) {
         String sql = "{call sp_insertardetalleventa(?, ?, ?, ?, ?)}";
         try (Connection con = Conexion.getInstancia().conectar();
@@ -22,7 +23,7 @@ public class DetalleVentaImpl implements DetalleVentaDAO {
             cs.setString(2, detalleVenta.getCodigoBarras());
             cs.setInt(3, detalleVenta.getCantidad());
             cs.setDouble(4, detalleVenta.getPrecioUnitario());
-            cs.setDouble(5, detalleVenta.getSubTotalDetalle());
+            cs.setDouble(5, detalleVenta.getsubTotal());
             
             return cs.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -31,31 +32,40 @@ public class DetalleVentaImpl implements DetalleVentaDAO {
         }
     }
 
+    @Override
     public List<DetalleVenta> listar() {
-List<DetalleVenta> lista = new ArrayList<>();
-    String sql = "{call sp_listardetalleventa(?)}";
+        List<DetalleVenta> lista = new ArrayList<>();
+        String sql = "SELECT dv.id_detalle, dv.id_venta, dv.codigo_barras, v.titulo_album, dv.cantidad, dv.precio_unitario, dv.subtotal "
+                   + "FROM detalle_venta dv "
+                   + "LEFT JOIN vinilos v ON dv.codigo_barras = v.codigo_barras";
 
- try (Connection con = Conexion.getInstancia().conectar();
-             CallableStatement cs = con.prepareCall(sql)) {
-        cs.setObject(1, null);
-        try (ResultSet rs = cs.executeQuery()) {
+        try (Connection con = Conexion.getInstancia().conectar();
+             CallableStatement cs = con.prepareCall(sql);
+             ResultSet rs = cs.executeQuery()) {
+
             while (rs.next()) {
                 DetalleVenta dv = new DetalleVenta();
                 dv.setIdDetalleventa(rs.getInt("id_detalle"));
                 dv.setNoVenta(rs.getInt("id_venta"));
-                dv.setIsbn(rs.getString("codigo_barras"));
+                dv.setCodigoBarras(rs.getString("codigo_barras"));
+                dv.setTituloAlbum(rs.getString("titulo_album"));
                 dv.setCantidad(rs.getInt("cantidad"));
                 dv.setPrecioUnitario(rs.getDouble("precio_unitario"));
-                dv.setSubTotalDetalle(rs.getDouble("subtotal"));
+                dv.setSubTotal(rs.getDouble("subtotal"));
                 lista.add(dv);
             }
+        } catch (SQLException e) {
+            System.err.println("Error [Listar Detalles Ventas]: " + e.getMessage());
         }
-    } catch (SQLException e) {
+        return lista;
     }
-    return lista;
-}
+
+    @Override
     public DetalleVenta buscar(int idDetalleventa) {
-        String sql = "{call sp_buscardetalleventa(?)}";
+        String sql = "SELECT dv.id_detalle, dv.id_venta, dv.codigo_barras, v.titulo_album, dv.cantidad, dv.precio_unitario, dv.subtotal "
+                   + "FROM detalle_venta dv "
+                   + "LEFT JOIN vinilos v ON dv.codigo_barras = v.codigo_barras "
+                   + "WHERE dv.id_detalle = ?";
         try (Connection con = Conexion.getInstancia().conectar();
              CallableStatement cs = con.prepareCall(sql)) {
             
@@ -63,10 +73,13 @@ List<DetalleVenta> lista = new ArrayList<>();
             try (ResultSet rs = cs.executeQuery()) {
                 if (rs.next()) {
                     return new DetalleVenta(
+                            rs.getInt("id_detalle"),
+                            rs.getInt("id_venta"),
                             rs.getString("codigo_barras"),
-                        rs.getString("id_venta"),
-                            rs.getDouble("precio_unitario"),
-                        rs.getInt("cantidad"));
+                            rs.getString("titulo_album"),
+                            rs.getInt("cantidad"),
+                            rs.getDouble("precio_unitario")
+                    );
                 }
             }
         } catch (SQLException e) {
@@ -75,17 +88,18 @@ List<DetalleVenta> lista = new ArrayList<>();
         return null;
     }
 
+    @Override
     public boolean actualizar(DetalleVenta objeto) {
-        String sql = "{call sp_actualizardetalleventa(?, ?, ?, ?, ?, ?)}";
+        String sql = "UPDATE detalle_venta SET id_venta = ?, codigo_barras = ?, cantidad = ?, precio_unitario = ?, subtotal = ? WHERE id_detalle = ?";
         try (Connection con = Conexion.getInstancia().conectar();
              CallableStatement cs = con.prepareCall(sql)) {
             
-            cs.setInt(1, objeto.getIdDetalleventa());
-            cs.setInt(2, objeto.getNoVenta());
-            cs.setString(3, objeto.getIsbn());
-            cs.setInt(4, objeto.getCantidad());
-            cs.setDouble(5, objeto.getPrecioUnitario());
-            cs.setDouble(6, objeto.getSubTotalDetalle());
+            cs.setInt(1, objeto.getNoVenta());
+            cs.setString(2, objeto.getCodigoBarras());
+            cs.setInt(3, objeto.getCantidad());
+            cs.setDouble(4, objeto.getPrecioUnitario());
+            cs.setDouble(5, objeto.getsubTotal());
+            cs.setInt(6, objeto.getIdDetalleventa());
             
             return cs.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -94,8 +108,9 @@ List<DetalleVenta> lista = new ArrayList<>();
         }
     }
 
+    @Override
     public boolean eliminar(int idDetalleventa) {
-        String sql = "{call sp_eliminardetalleventa(?)}";
+        String sql = "DELETE FROM detalle_venta WHERE id_detalle = ?";
         try (Connection con = Conexion.getInstancia().conectar();
              CallableStatement cs = con.prepareCall(sql)) {
             
@@ -106,6 +121,4 @@ List<DetalleVenta> lista = new ArrayList<>();
             return false;
         }
     } 
-
-
 }
