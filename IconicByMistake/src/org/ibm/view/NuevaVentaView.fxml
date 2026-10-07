@@ -33,8 +33,8 @@
             </VBox>
             <VBox spacing="4.0">
                <children>
-                  <Label style="-fx-text-fill: #386646; -fx-font-size: 12px; -fx-font-weight: bold;" text="Libro" />
-                  <ComboBox fx:id="cmbLibro" maxWidth="1.7976931348623157E308" prefHeight="38.0" promptText="Seleccione un libro" style="-fx-background-color: #F0F5F3; -fx-background-radius: 6; -fx-border-color: #9BBABA; -fx-border-radius: 6;" />
+                  <Label style="-fx-text-fill: #386646; -fx-font-size: 12px; -fx-font-weight: bold;" text="Vinilo" />
+                  <ComboBox fx:id="cmbVinilo" maxWidth="1.7976931348623157E308" prefHeight="38.0" promptText="Seleccione un vinilo" style="-fx-background-color: #F0F5F3; -fx-background-radius: 6; -fx-border-color: #9BBABA; -fx-border-radius: 6;" />
                </children>
             </VBox>
             <HBox alignment="BOTTOM_LEFT" spacing="10.0">
@@ -73,11 +73,11 @@
             </VBox>
             <TableView fx:id="tablaLineas" style="-fx-background-color: #FFFFFF; -fx-background-radius: 8; -fx-border-color: #9BBABA; -fx-border-radius: 8; -fx-effect: dropshadow(three-pass-box, rgba(7, 26, 9, 0.04), 6, 0, 0, 2);" VBox.vgrow="ALWAYS">
                <columns>
-                  <TableColumn fx:id="colIsbn" prefWidth="120.0" text="ISBN" />
+                  <TableColumn fx:id="colCodigoBarras" prefWidth="120.0" text="Código de Barras" />
                   <TableColumn fx:id="colTitulo" prefWidth="220.0" text="Título" />
                   <TableColumn fx:id="colPrecio" prefWidth="100.0" text="Precio" />
                   <TableColumn fx:id="colCantidad" prefWidth="90.0" text="Cantidad" />
-                  <TableColumn fx:id="colSubtotal" prefWidth="110.0" text="Subtotal" />
+                  <TableColumn fx:id="colsubtotal" prefWidth="110.0" text="Subtotal" />
                </columns>
                <columnResizePolicy>
                   <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
