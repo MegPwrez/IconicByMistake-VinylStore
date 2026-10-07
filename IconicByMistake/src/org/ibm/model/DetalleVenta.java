@@ -6,29 +6,29 @@ public class DetalleVenta {
 
     private int idDetalleventa;
     private int noVenta;
-    private String isbn;
-    private String titulo;
+    private String codigoBarras;
+    private String tituloAlbum;
     private int cantidad;
     private double precioUnitario;
-    private double subTotalDetalle;
+    private double subTotal;
 
     public DetalleVenta() {
     }
-    public DetalleVenta(String isbn, String titulo, double precioUnitario, int cantidad) {
-        this.isbn = isbn;
-        this.titulo = titulo;
+    public DetalleVenta(String codigoBarras, String tituloAlbum, double precioUnitario, int cantidad) {
+        this.codigoBarras = codigoBarras;
+        this.tituloAlbum = tituloAlbum;
         this.precioUnitario = precioUnitario;
         this.cantidad = cantidad;
-        this.subTotalDetalle = precioUnitario * cantidad;
+        this.subTotal = precioUnitario * cantidad;
     }
-    public DetalleVenta(int idDetalleventa, int noVenta, String isbn, String titulo, int cantidad, double precioUnitario) {
+    public DetalleVenta(int idDetalleventa, int noVenta, String CodigoBarras, String titulo, int cantidad, double precioUnitario) {
         this.idDetalleventa = idDetalleventa;
         this.noVenta = noVenta;
-        this.isbn = isbn;
-        this.titulo = titulo;
+        this.codigoBarras = CodigoBarras;
+        this.tituloAlbum = tituloAlbum;
         this.cantidad = cantidad;
         this.precioUnitario = precioUnitario;
-        this.subTotalDetalle = precioUnitario * cantidad;
+        this.subTotal = precioUnitario * cantidad;
     }
     public int getIdDetalleventa() {
         return idDetalleventa;
@@ -45,20 +45,20 @@ public class DetalleVenta {
         this.noVenta = noVenta;
     }
 
-    public String getIsbn() {
-        return isbn;
+    public String getCodigoBarras() {
+        return codigoBarras;
     }
 
-    public void setIsbn(String isbn) {
-        this.isbn = isbn;
+    public void setCodigoBarras(String codigoBarras) {
+        this.codigoBarras = codigoBarras;
     }
 
-    public String getTitulo() {
-        return titulo;
+    public String getTituloAlbum() {
+        return tituloAlbum;
     }
 
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
+    public void setTituloAlbum(String tituloAlbum) {
+        this.tituloAlbum = tituloAlbum;
     }
 
     public int getCantidad() {
@@ -77,12 +77,12 @@ public class DetalleVenta {
         this.precioUnitario = precioUnitario;
     }
 
-    public double getSubTotalDetalle() {
-        return subTotalDetalle;
+    public double getsubTotal() {
+        return subTotal;
     }
 
-    public void setSubTotalDetalle(double subTotalDetalle) {
-        this.subTotalDetalle = subTotalDetalle;
+    public void setSubTotal(double subTotal) {
+        this.subTotal = subTotal;
     }
 
   
