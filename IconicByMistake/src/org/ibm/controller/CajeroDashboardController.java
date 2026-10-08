@@ -61,7 +61,7 @@ public class CajeroDashboardController implements Initializable {
     @FXML
     public void handleResumenDia(ActionEvent event) {
         log.info("Navegando a la pantalla de Resumen del Día.");
-        navegar("/org/ibm/view/ResumenDelDiaView.fxml");
+        navegar("/org/ibm/view/ResumenDelDíaView.fxml");
     }
 
     @FXML

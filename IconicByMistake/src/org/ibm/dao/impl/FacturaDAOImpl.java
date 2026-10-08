@@ -46,7 +46,7 @@ public class FacturaDAOImpl implements FacturaDAO {
                     detalle.setPrecioUnitario(rs.getDouble("precio_unitario"));
                     detalle.setSubTotal(rs.getDouble("subtotal_item"));
 
-                    facturaActual.agregarDetalle(detalle);
+                    facturaActual.agregarDetalle(detalle);  
                 }
 
                 if (facturaActual != null) {

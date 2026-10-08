@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+
+<BorderPane prefHeight="600.0" prefWidth="950.0" style="-fx-background-color: #F0F5F3; -fx-font-family: 'Century Gothic';" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ibm.controller.ResumenDelDiaController">
+   <top>
+      <HBox alignment="CENTER_LEFT" prefHeight="65.0" style="-fx-background-color: #8FB5A1;" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets left="20.0" right="20.0" />
+         </padding>
+         <children>
+            <Circle fx:id="avatarCircle" radius="18.0" style="-fx-fill: #386646;" styleClass="avatar" />
+            <HBox alignment="CENTER_LEFT" spacing="12.0" style="-fx-padding: 0 0 0 12px;">
+               <children>
+                  <VBox alignment="CENTER_LEFT">
+                     <children>
+                        <Label fx:id="lblBienvenida" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #071A09;" text="Bienvenido" />
+                        <Label fx:id="lblRol" style="-fx-font-size: 11px; -fx-text-fill: #386646;" text="Administrador" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            <Region HBox.hgrow="ALWAYS" />
+         </children>
+      </HBox>
+   </top>
+   <left>
+      <VBox prefWidth="220.0" spacing="10.0" style="-fx-background-color: #9BBABA;" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets bottom="15.0" left="15.0" right="15.0" top="20.0" />
+         </padding>
+         <children>
+            <Label style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #071A09;" text="Navegación" />
+            <Separator style="-fx-background-color: #658273;" />
+            <Button fx:id="btnResumenDia" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" style="-fx-background-color: #386646; -fx-text-fill: white; -fx-background-radius: 6px; -fx-cursor: hand;" text="📊  Resumen del Día" />
+            <Button fx:id="btnVolver" alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleVolver" style="-fx-background-color: transparent; -fx-text-fill: #071A09; -fx-background-radius: 6px; -fx-cursor: hand;" text="⬅  Regresar" />
+            <Region VBox.vgrow="ALWAYS" />
+            <Separator style="-fx-background-color: #658273;" />
+         </children>
+      </VBox>
+   </left>
+   <center>
+      <VBox spacing="20.0" style="-fx-background-color: #F0F5F3;" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets bottom="25.0" left="25.0" right="25.0" top="20.0" />
+         </padding>
+         <children>
+            <VBox spacing="3.0">
+               <children>
+                  <Label style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #071A09;" text="Resumen del Día" />
+                  <Label style="-fx-font-size: 13px; -fx-text-fill: #658273;" text="Control de ventas y transacciones registradas el día de hoy" />
+               </children>
+            </VBox>
+            <Separator style="-fx-background-color: #8FB5A1;" />
+            
+            <HBox spacing="20.0">
+               <children>
+                  <VBox alignment="CENTER" prefHeight="85.0" prefWidth="220.0" style="-fx-background-color: white; -fx-background-radius: 8px; -fx-effect: dropshadow(three-pass-box, rgba(7,26,9,0.08), 6, 0, 0, 2);">
+                     <children>
+                        <Label style="-fx-font-size: 12px; -fx-text-fill: #658273;" text="Venta Total del Día" />
+                        <Label fx:id="lblVentaTotalDia" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #1E8A35;" text="Q 0.00" />
+                     </children>
+                  </VBox>
+                  <VBox alignment="CENTER" prefHeight="85.0" prefWidth="220.0" style="-fx-background-color: white; -fx-background-radius: 8px; -fx-effect: dropshadow(three-pass-box, rgba(7,26,9,0.08), 6, 0, 0, 2);">
+                     <children>
+                        <Label style="-fx-font-size: 12px; -fx-text-fill: #658273;" text="Total de Facturas" />
+                        <Label fx:id="lblTotalFacturas" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #386646;" text="0" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+
+            <TableView fx:id="tablaResumen" prefHeight="320.0" style="-fx-background-color: white; -fx-background-radius: 8px; -fx-border-color: #8FB5A1; -fx-border-radius: 8px;" VBox.vgrow="ALWAYS">
+              <columns>
+                <TableColumn fx:id="colNoFactura" prefWidth="110.0" text="No. Factura" />
+                <TableColumn fx:id="colFecha" prefWidth="180.0" text="Fecha / Hora" />
+                <TableColumn fx:id="colCliente" prefWidth="230.0" text="Cliente" />
+                <TableColumn fx:id="colTotal" prefWidth="130.0" text="Total (Q)" />
+              </columns>
+            </TableView>
+         </children>
+      </VBox>
+   </center>
+</BorderPane>
