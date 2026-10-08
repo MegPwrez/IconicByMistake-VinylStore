@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane prefHeight="650.0" prefWidth="1000.0" style="-fx-background-color: #F0F5F3; -fx-font-family: 'Century Gothic';" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ibm.controller.ClienteController">
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+   </padding>
+
+   <left>
+      <VBox maxWidth="320.0" minWidth="320.0" spacing="12.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(7,26,9,0.06), 8, 0, 0, 2);">
+         <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+         </padding>
+         <children>
+            <Button onAction="#handleVolverMenu" prefHeight="35.0" style="-fx-background-color: #9BBABA; -fx-text-fill: #071A09; -fx-font-weight: bold; -fx-background-radius: 6; -fx-cursor: hand;" text="← Volver al Menú">
+               <font>
+                  <Font name="Century Gothic" size="12.0" />
+               </font>
+            </Button>
+            <Label style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #071A09;" text="Registrar Cliente" />
+            <TextField fx:id="txtCui" disable="true" prefHeight="38.0" promptText="CUI" style="-fx-background-radius: 6; -fx-border-color: #8FB5A1; -fx-border-radius: 6; -fx-background-color: #F0F5F3;" />
+            <TextField fx:id="txtNombre" disable="true" prefHeight="38.0" promptText="Nombre" style="-fx-background-radius: 6; -fx-border-color: #8FB5A1; -fx-border-radius: 6; -fx-background-color: #F0F5F3;" />
+            <TextField fx:id="txtApellido" disable="true" prefHeight="38.0" promptText="Apellido" style="-fx-background-radius: 6; -fx-border-color: #8FB5A1; -fx-border-radius: 6; -fx-background-color: #F0F5F3;" />
+            <TextField fx:id="txtCorreo" disable="true" prefHeight="38.0" promptText="Correo Electrónico" style="-fx-background-radius: 6; -fx-border-color: #8FB5A1; -fx-border-radius: 6; -fx-background-color: #F0F5F3;" />
+            <HBox spacing="10.0">
+               <children>
+                  <Button fx:id="btnNuevo" onAction="#handleNuevoCliente" prefHeight="36.0" prefWidth="135.0" style="-fx-background-color: #386646; -fx-text-fill: #FFFFFF; -fx-font-weight: bold; -fx-background-radius: 6; -fx-cursor: hand;" text="Nuevo Cliente" />
+                  <Button fx:id="btnEditar" onAction="#handleEditar" prefHeight="36.0" prefWidth="135.0" style="-fx-background-color: #658273; -fx-text-fill: #FFFFFF; -fx-font-weight: bold; -fx-background-radius: 6; -fx-cursor: hand;" text="Editar" />
+               </children>
+            </HBox>
+            <HBox spacing="10.0">
+               <children>
+                  <Button onAction="#handleGuardar" prefHeight="36.0" prefWidth="135.0" style="-fx-background-color: #55AB66; -fx-text-fill: #FFFFFF; -fx-font-weight: bold; -fx-background-radius: 6; -fx-cursor: hand;" text="Guardar" />
+                  <Button onAction="#handleCancelar" prefHeight="36.0" prefWidth="135.0" style="-fx-background-color: #9BBABA; -fx-text-fill: #071A09; -fx-font-weight: bold; -fx-background-radius: 6; -fx-cursor: hand;" text="Cancelar" />
+               </children>
+            </HBox>
+<Label fx:id="lblMensaje" prefWidth="280.0" style="-fx-text-fill: #1E8A35; -fx-font-size: 12px; -fx-font-weight: bold;" wrapText="true" />
+         </children>
+      </VBox>
+   </left>
+
+   <center>
+      <VBox spacing="12.0">
+         <padding>
+            <Insets left="20.0" />
+         </padding>
+         <children>
+            <Label style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #071A09;" text="Lista de Clientes" />
+            <TextField fx:id="txtBuscar" prefHeight="38.0" promptText="Buscar por CUI, nombre o apellido…" style="-fx-background-radius: 6; -fx-border-color: #8FB5A1; -fx-border-radius: 6; -fx-background-color: #FFFFFF;" />
+            <TableView fx:id="tablaClientes" VBox.vgrow="ALWAYS" style="-fx-background-radius: 8; -fx-border-color: #8FB5A1; -fx-border-radius: 8; -fx-background-color: #FFFFFF;">
+               <columns>
+                  <TableColumn fx:id="colCUI" prefWidth="130.0" style="-fx-font-family: 'Century Gothic';" text="CUI" />
+                  <TableColumn fx:id="colNombreCliente" prefWidth="150.0" style="-fx-font-family: 'Century Gothic';" text="Nombre Cliente" />
+                  <TableColumn fx:id="colApellidoCliente" prefWidth="150.0" style="-fx-font-family: 'Century Gothic';" text="Apellido Cliente" />
+                  <TableColumn fx:id="colCorreoElectronico" prefWidth="220.0" style="-fx-font-family: 'Century Gothic';" text="Correo Electrónico" />
+               </columns>
+            </TableView>
+            <HBox alignment="CENTER" spacing="10.0">
+               <children>
+                  <Button fx:id="btnPrimero" onAction="#handlePrimero" prefHeight="32.0" prefWidth="100.0" style="-fx-background-color: #658273; -fx-text-fill: #FFFFFF; -fx-font-weight: bold; -fx-background-radius: 6; -fx-cursor: hand;" text="« Primero" />
+                  <Button fx:id="btnAnterior" onAction="#handleAnterior" prefHeight="32.0" prefWidth="100.0" style="-fx-background-color: #658273; -fx-text-fill: #FFFFFF; -fx-font-weight: bold; -fx-background-radius: 6; -fx-cursor: hand;" text="‹ Anterior" />
+                  <Button fx:id="btnSiguiente" onAction="#handleSiguiente" prefHeight="32.0" prefWidth="100.0" style="-fx-background-color: #658273; -fx-text-fill: #FFFFFF; -fx-font-weight: bold; -fx-background-radius: 6; -fx-cursor: hand;" text="Siguiente ›" />
+                  <Button fx:id="btnUltimo" onAction="#handleUltimo" prefHeight="32.0" prefWidth="100.0" style="-fx-background-color: #658273; -fx-text-fill: #FFFFFF; -fx-font-weight: bold; -fx-background-radius: 6; -fx-cursor: hand;" text="Último »" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </center>
+</BorderPane>

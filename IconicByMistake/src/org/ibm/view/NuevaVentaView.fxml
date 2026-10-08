@@ -76,12 +76,9 @@
                   <TableColumn fx:id="colCodigoBarras" prefWidth="120.0" text="Código de Barras" />
                   <TableColumn fx:id="colTitulo" prefWidth="220.0" text="Título" />
                   <TableColumn fx:id="colPrecio" prefWidth="100.0" text="Precio" />
-                  <TableColumn fx:id="colCantidad" prefWidth="90.0" text="Cantidad" />
+                  <TableColumn fx:id="colCantidad" prefWidth="90.0" text="cantidad" />
                   <TableColumn fx:id="colsubtotal" prefWidth="110.0" text="Subtotal" />
                </columns>
-               <columnResizePolicy>
-                  <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-               </columnResizePolicy>
             </TableView>
             <HBox spacing="10.0">
                <children>
