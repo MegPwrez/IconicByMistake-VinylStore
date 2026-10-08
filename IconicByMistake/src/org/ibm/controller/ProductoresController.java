@@ -46,6 +46,8 @@ public class ProductoresController implements Initializable {
     
     @FXML private Button btnNuevo;
     @FXML private Button btnEditar;
+    @FXML private Button btnGuardar;
+    @FXML private Button btnCancelar;
     @FXML private Button btnPrimero;
     @FXML private Button btnAnterior;
     @FXML private Button btnSiguiente;
@@ -177,7 +179,6 @@ public class ProductoresController implements Initializable {
         modoEdicion = true;
         activarFormulario();
         desactivarNavegacion();
-        // El ID usualmente no se edita si es llave primaria, puedes bloquearlo si lo deseas:
         txtIdProductor.setDisable(true); 
         lblMensaje.setText("");
     }
@@ -223,7 +224,7 @@ public class ProductoresController implements Initializable {
         LOGGER.info("Navegando de regreso al menú principal.");
         try {
             Stage escenarioPrincipal = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/ibm/view/DashboardBodegaView.fxml")); // Ajusta la ruta de tu menú si es distinta
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/ibm/view/DashboardBodegaView.fxml"));
             Parent root = loader.load();
             Scene scene = new Scene(root);
             escenarioPrincipal.setTitle("Menú Principal");
@@ -245,12 +246,16 @@ public class ProductoresController implements Initializable {
         txtIdProductor.setDisable(false);
         txtNombreProductor.setDisable(false);
         txtSelloDiscografico.setDisable(false);
+        if (btnGuardar != null) btnGuardar.setDisable(false);
+        if (btnCancelar != null) btnCancelar.setDisable(false);
     }
 
     private void desactivarFormulario() {
         txtIdProductor.setDisable(true);
         txtNombreProductor.setDisable(true);
         txtSelloDiscografico.setDisable(true);
+        if (btnGuardar != null) btnGuardar.setDisable(true);
+        if (btnCancelar != null) btnCancelar.setDisable(true);
     }
 
     private void activarNavegacion() {
