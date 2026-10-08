@@ -1,15 +1,23 @@
 package org.ibm.model;
 
+import java.sql.Date;
+
 public class Vinilo {
-    private int idVinilo;
-    private String titulo;
-    private String anioLanzamiento; // Cambiado a String para admitir texto libre o fechas
+
+    private String codigoBarras;
+    private String tituloAlbum;
+    private Date fechaLanzamiento;
     private double precio;
-    private int stock;
-    private String Sku;
-    private String urlFoto;
-    
-    // Relaciones
+    private int stockActual;
+    private int stockMinimo;
+    private boolean activo;
+    private String urlFoto; // Campo agregado para la ruta o URL de la imagen
+
+    // Llaves foráneas y Relaciones
+    private int idGenero;
+    private String nitDisquera;
+    private Integer idProveedor;
+
     private Artista artista;
     private Genero genero;
     private Productor productor;
@@ -17,46 +25,45 @@ public class Vinilo {
     public Vinilo() {
     }
 
-    public Vinilo(int idVinilo, String titulo, String anioLanzamiento, double precio, int stock, String Sku, String urlFoto, Artista artista, Genero genero, Productor productor) {
-        this.idVinilo = idVinilo;
-        this.titulo = titulo;
-        this.anioLanzamiento = anioLanzamiento;
+    public Vinilo(String codigoBarras, String tituloAlbum, Date fechaLanzamiento, double precio, 
+                  int stockActual, int stockMinimo, boolean activo, String urlFoto, int idGenero, 
+                  String nitDisquera, Integer idProveedor) {
+        this.codigoBarras = codigoBarras;
+        this.tituloAlbum = tituloAlbum;
+        this.fechaLanzamiento = fechaLanzamiento;
         this.precio = precio;
-        this.stock = stock;
-        this.Sku = Sku;
+        this.stockActual = stockActual;
+        this.stockMinimo = stockMinimo;
+        this.activo = activo;
         this.urlFoto = urlFoto;
-        this.artista = artista;
-        this.genero = genero;
-        this.productor = productor;
+        this.idGenero = idGenero;
+        this.nitDisquera = nitDisquera;
+        this.idProveedor = idProveedor;
     }
 
-    @Override
-    public String toString() {
-        return titulo + " - Q" + precio;
+    // Getters y Setters
+    public String getCodigoBarras() {
+        return codigoBarras;
     }
 
-    public int getIdVinilo() {
-        return idVinilo;
+    public void setCodigoBarras(String codigoBarras) {
+        this.codigoBarras = codigoBarras;
     }
 
-    public void setIdVinilo(int idVinilo) {
-        this.idVinilo = idVinilo;
+    public String getTituloAlbum() {
+        return tituloAlbum;
     }
 
-    public String getTitulo() {
-        return titulo;
+    public void setTituloAlbum(String tituloAlbum) {
+        this.tituloAlbum = tituloAlbum;
     }
 
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
+    public Date getFechaLanzamiento() {
+        return fechaLanzamiento;
     }
 
-    public String getAnioLanzamiento() {
-        return anioLanzamiento;
-    }
-
-    public void setAnioLanzamiento(String anioLanzamiento) {
-        this.anioLanzamiento = anioLanzamiento;
+    public void setFechaLanzamiento(Date fechaLanzamiento) {
+        this.fechaLanzamiento = fechaLanzamiento;
     }
 
     public double getPrecio() {
@@ -67,20 +74,28 @@ public class Vinilo {
         this.precio = precio;
     }
 
-    public int getStock() {
-        return stock;
+    public int getStockActual() {
+        return stockActual;
     }
 
-    public void setStock(int stock) {
-        this.stock = stock;
+    public void setStockActual(int stockActual) {
+        this.stockActual = stockActual;
     }
 
-    public String getSku() {
-        return Sku;
+    public int getStockMinimo() {
+        return stockMinimo;
     }
 
-    public void setSku(String Sku) {
-        this.Sku = Sku;
+    public void setStockMinimo(int stockMinimo) {
+        this.stockMinimo = stockMinimo;
+    }
+
+    public boolean isActivo() {
+        return activo;
+    }
+
+    public void setActivo(boolean activo) {
+        this.activo = activo;
     }
 
     public String getUrlFoto() {
@@ -89,6 +104,30 @@ public class Vinilo {
 
     public void setUrlFoto(String urlFoto) {
         this.urlFoto = urlFoto;
+    }
+
+    public int getIdGenero() {
+        return idGenero;
+    }
+
+    public void setIdGenero(int idGenero) {
+        this.idGenero = idGenero;
+    }
+
+    public String getNitDisquera() {
+        return nitDisquera;
+    }
+
+    public void setNitDisquera(String nitDisquera) {
+        this.nitDisquera = nitDisquera;
+    }
+
+    public Integer getIdProveedor() {
+        return idProveedor;
+    }
+
+    public void setIdProveedor(Integer idProveedor) {
+        this.idProveedor = idProveedor;
     }
 
     public Artista getArtista() {
@@ -113,5 +152,10 @@ public class Vinilo {
 
     public void setProductor(Productor productor) {
         this.productor = productor;
+    }
+
+    @Override
+    public String toString() {
+        return codigoBarras + " - " + tituloAlbum;
     }
 }

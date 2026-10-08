@@ -7,6 +7,8 @@ public interface ViniloDAO {
 
     List<Vinilo> listarTodos();
 
+    Vinilo buscarPorId(String codigoBarras); // Agregado para mantener consistencia
+
     List<Vinilo> buscar(String criterio);
 
     boolean crear(Vinilo vinilo);

@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+
+<BorderPane prefHeight="600.0" prefWidth="950.0" style="-fx-background-color: #F0F5F3; -fx-font-family: 'Century Gothic';" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ibm.controller.CajeroDashboardController">
+   <top>
+      <HBox alignment="CENTER_LEFT" prefHeight="65.0" style="-fx-background-color: #071A09; -fx-effect: dropshadow(three-pass-box, rgba(7, 26, 9, 0.15), 10, 0, 0, 2);" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets left="20.0" right="20.0" />
+         </padding>
+         <children>
+            <Circle fx:id="avatarCircle" radius="20.0" style="-fx-fill: #9BBABA; -fx-stroke: #55AB66; -fx-stroke-width: 2;" styleClass="avatar" />
+            <HBox alignment="CENTER_LEFT" spacing="12.0">
+               <children>
+                  <VBox alignment="CENTER_LEFT" spacing="2.0">
+                     <children>
+                        <Label fx:id="lblNombreUsuario" style="-fx-text-fill: #F0F5F3; -fx-font-weight: bold; -fx-font-size: 14px;" text="Cajero" />
+                        <Label fx:id="lblRolUsuario" style="-fx-text-fill: #9BBABA; -fx-font-size: 11px;" text="Cajero" />
+                     </children>
+                     <HBox.margin>
+                        <Insets left="10.0" />
+                     </HBox.margin>
+                  </VBox>
+               </children>
+            </HBox>
+            <Region HBox.hgrow="ALWAYS" />
+            <Button mnemonicParsing="false" onAction="#handleCerrarSesion" style="-fx-background-color: transparent; -fx-border-color: #8FB5A1; -fx-border-radius: 6; -fx-text-fill: #F0F5F3; -fx-font-size: 12px; -fx-cursor: hand;" text="Cerrar Sesión">
+               <padding>
+                  <Insets bottom="8.0" left="16.0" right="16.0" top="8.0" />
+               </padding>
+            </Button>
+         </children>
+      </HBox>
+   </top>
+   <left>
+      <VBox prefWidth="230.0" spacing="12.0" style="-fx-background-color: #386646;" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets bottom="15.0" left="15.0" right="15.0" top="20.0" />
+         </padding>
+         <children>
+            <Label style="-fx-text-fill: #9BBABA; -fx-font-weight: bold; -fx-font-size: 12px;" text="NAVEGACIÓN" />
+            <Separator style="-fx-opacity: 0.3;" />
+            <Button alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleResumenDia" style="-fx-background-color: transparent; -fx-text-fill: #F0F5F3; -fx-font-size: 13px; -fx-cursor: hand;" text="📊  Resumen del Día" />
+            <Button alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleNuevaVenta" style="-fx-background-color: #1E8A35; -fx-background-radius: 6; -fx-text-fill: #FFFFFF; -fx-font-weight: bold; -fx-font-size: 13px; -fx-cursor: hand;" text="🗎  Nueva Venta" />
+            <Button alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleDetalleVentas" style="-fx-background-color: transparent; -fx-text-fill: #F0F5F3; -fx-font-size: 13px; -fx-cursor: hand;" text="📋  Detalle Ventas" />
+            <Button alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleListaVentas" style="-fx-background-color: transparent; -fx-text-fill: #F0F5F3; -fx-font-size: 13px; -fx-cursor: hand;" text="📓  Lista de Ventas" />
+            <Button alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleClientes" style="-fx-background-color: transparent; -fx-text-fill: #F0F5F3; -fx-font-size: 13px; -fx-cursor: hand;" text="👤  Clientes" />
+            <Region VBox.vgrow="ALWAYS" />
+            <Separator style="-fx-opacity: 0.3;" />
+         </children>
+      </VBox>
+   </left>
+   <center>
+      <VBox spacing="20.0" style="-fx-background-color: #F0F5F3;" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets bottom="25.0" left="25.0" right="25.0" top="20.0" />
+         </padding>
+         <children>
+            <VBox spacing="4.0">
+               <children>
+                  <Label style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #071A09;" text="Panel de Cajero" />
+                  <Label style="-fx-font-size: 13px; -fx-text-fill: #658273;" text="Proceso de ventas y consulta de inventario" />
+               </children>
+            </VBox>
+            <Separator style="-fx-background-color: #9BBABA; -fx-opacity: 0.5;" />
+            <FlowPane hgap="20.0" vgap="20.0">
+               <children>
+                  <Button onAction="#handleNuevaVenta" prefHeight="150.0" prefWidth="200.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 12; -fx-effect: dropshadow(three-pass-box, rgba(7,26,9,0.06), 8, 0, 0, 3); -fx-cursor: hand; -fx-border-color: #9BBABA; -fx-border-radius: 12; -fx-border-width: 0.5;">
+                     <graphic>
+                        <VBox alignment="CENTER" spacing="8.0">
+                           <children>
+                              <Label style="-fx-font-size: 30px;" text="➕" />
+                              <Label style="-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #071A09;" text="Agregar Venta" />
+                              <Label text="Registrar una nueva&#10;venta o factura" textAlignment="CENTER" style="-fx-text-fill: #658273; -fx-font-size: 11px;" />
+                           </children>
+                        </VBox>
+                     </graphic>
+                  </Button>
+                  <Button onAction="#handleDetalleVentas" prefHeight="150.0" prefWidth="200.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 12; -fx-effect: dropshadow(three-pass-box, rgba(7,26,9,0.06), 8, 0, 0, 3); -fx-cursor: hand; -fx-border-color: #9BBABA; -fx-border-radius: 12; -fx-border-width: 0.5;">
+                     <graphic>
+                        <VBox alignment="CENTER" spacing="8.0">
+                           <children>
+                              <Label style="-fx-font-size: 30px;" text="📋" />
+                              <Label style="-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #071A09;" text="Detalle de Ventas" />
+                              <Label text="Líneas de cada&#10;venta registrada" textAlignment="CENTER" style="-fx-text-fill: #658273; -fx-font-size: 11px;" />
+                           </children>
+                        </VBox>
+                     </graphic>
+                  </Button>
+                  <Button onAction="#handleListaVentas" prefHeight="150.0" prefWidth="200.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 12; -fx-effect: dropshadow(three-pass-box, rgba(7,26,9,0.06), 8, 0, 0, 3); -fx-cursor: hand; -fx-border-color: #9BBABA; -fx-border-radius: 12; -fx-border-width: 0.5;">
+                     <graphic>
+                        <VBox alignment="CENTER" spacing="8.0">
+                           <children>
+                              <Label style="-fx-font-size: 30px;" text="📓" />
+                              <Label style="-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #071A09;" text="Lista de Ventas" />
+                              <Label text="Consultar ventas&#10;registradas" textAlignment="CENTER" style="-fx-text-fill: #658273; -fx-font-size: 11px;" />
+                           </children>
+                        </VBox>
+                     </graphic>
+                  </Button>
+                  <Button onAction="#handleResumenDia" prefHeight="150.0" prefWidth="200.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 12; -fx-effect: dropshadow(three-pass-box, rgba(7,26,9,0.06), 8, 0, 0, 3); -fx-cursor: hand; -fx-border-color: #9BBABA; -fx-border-radius: 12; -fx-border-width: 0.5;">
+                     <graphic>
+                        <VBox alignment="CENTER" spacing="8.0">
+                           <children>
+                              <Label style="-fx-font-size: 30px;" text="📊" />
+                              <Label style="-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #071A09;" text="Resumen del Día" />
+                              <Label text="Consulta las ventas&#10;hechas hoy" textAlignment="CENTER" style="-fx-text-fill: #658273; -fx-font-size: 11px;" />
+                           </children>
+                        </VBox>
+                     </graphic>
+                  </Button>
+                  <Button onAction="#handleClientes" prefHeight="150.0" prefWidth="200.0" style="-fx-background-color: #FFFFFF; -fx-background-radius: 12; -fx-effect: dropshadow(three-pass-box, rgba(7,26,9,0.06), 8, 0, 0, 3); -fx-cursor: hand; -fx-border-color: #9BBABA; -fx-border-radius: 12; -fx-border-width: 0.5;">
+                     <graphic>
+                        <VBox alignment="CENTER" spacing="8.0">
+                           <children>
+                              <Label style="-fx-font-size: 30px;" text="👤" />
+                              <Label style="-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #071A09;" text="Clientes" />
+                              <Label text="Crea o gestiona&#10;tus clientes" textAlignment="CENTER" style="-fx-text-fill: #658273; -fx-font-size: 11px;" />
+                           </children>
+                        </VBox>
+                     </graphic>
+                  </Button>
+               </children>
+            </FlowPane>
+         </children>
+      </VBox>
+   </center>
+</BorderPane>
