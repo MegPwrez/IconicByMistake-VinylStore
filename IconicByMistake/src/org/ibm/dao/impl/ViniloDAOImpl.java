@@ -33,6 +33,7 @@ public class ViniloDAOImpl implements ViniloDAO {
         return lista;
     }
 
+    @Override
     public Vinilo buscarPorId(String codigoBarras) {
         Vinilo vinilo = null;
         String sql = "{call sp_buscarlinilo(?)}";
@@ -60,11 +61,17 @@ public class ViniloDAOImpl implements ViniloDAO {
             consulta.setDate(3, vinilo.getFechaLanzamiento());
             consulta.setDouble(4, vinilo.getPrecio());
             consulta.setInt(5, vinilo.getStockActual());
-            consulta.setInt(6, 2); // stock_minimo por defecto
+            consulta.setInt(6, vinilo.getStockMinimo() > 0 ? vinilo.getStockMinimo() : 2); // stock_minimo
             consulta.setInt(7, vinilo.getGenero() != null ? vinilo.getGenero().getIdGenero() : 1);
             consulta.setString(8, vinilo.getProductor() != null ? vinilo.getProductor().getIdProductor() : "DISQ-01");
             consulta.setInt(9, 1); // id_proveedor por defecto
-            consulta.setNull(10, Types.VARCHAR); // url_foto omitido
+            
+            // Se pasa la URL de la foto de forma correcta
+            if (vinilo.getUrlFoto() != null && !vinilo.getUrlFoto().isEmpty()) {
+                consulta.setString(10, vinilo.getUrlFoto());
+            } else {
+                consulta.setNull(10, Types.VARCHAR);
+            }
             
             boolean ejecutado = consulta.executeUpdate() > 0;
             
@@ -87,11 +94,17 @@ public class ViniloDAOImpl implements ViniloDAO {
             consulta.setDate(3, vinilo.getFechaLanzamiento());
             consulta.setDouble(4, vinilo.getPrecio());
             consulta.setInt(5, vinilo.getStockActual());
-            consulta.setInt(6, 2); // stock_minimo
+            consulta.setInt(6, vinilo.getStockMinimo() > 0 ? vinilo.getStockMinimo() : 2); // stock_minimo
             consulta.setInt(7, vinilo.getGenero() != null ? vinilo.getGenero().getIdGenero() : 1);
             consulta.setString(8, vinilo.getProductor() != null ? vinilo.getProductor().getIdProductor() : "DISQ-01");
             consulta.setInt(9, 1); // id_proveedor
-            consulta.setNull(10, Types.VARCHAR); // url_foto omitido
+            
+            // Se pasa la URL de la foto de forma correcta
+            if (vinilo.getUrlFoto() != null && !vinilo.getUrlFoto().isEmpty()) {
+                consulta.setString(10, vinilo.getUrlFoto());
+            } else {
+                consulta.setNull(10, Types.VARCHAR);
+            }
             
             boolean actualizado = consulta.executeUpdate() > 0;
             
@@ -152,19 +165,22 @@ public class ViniloDAOImpl implements ViniloDAO {
         vinilo.setFechaLanzamiento(rs.getDate("fecha_lanzamiento"));
         vinilo.setPrecio(rs.getDouble("precio"));
         vinilo.setStockActual(rs.getInt("stock_actual"));
+        
+        // Mapeo del campo url_foto
+        try {
+            vinilo.setUrlFoto(rs.getString("url_foto"));
+        } catch (SQLException ignored) {}
 
-        // Mapeo correcto del Género usando setNombre(...)
         try {
             int idGen = rs.getInt("id_genero");
             if (!rs.wasNull()) {
                 Genero genero = new Genero();
                 genero.setIdGenero(idGen);
-                genero.setNombre(rs.getString("nombre_genero")); // <-- Corregido aquí
+                genero.setNombre(rs.getString("nombre_genero"));
                 vinilo.setGenero(genero);
             }
         } catch (SQLException ignored) {}
 
-        // Mapeo correcto del Productor / Disquera
         try {
             String nitDisq = rs.getString("nit_disquera");
             if (nitDisq != null) {
@@ -174,12 +190,14 @@ public class ViniloDAOImpl implements ViniloDAO {
                 vinilo.setProductor(productor);
             }
         } catch (SQLException ignored) {}
+
         try {
             int idArt = rs.getInt("id_artista");
             if (!rs.wasNull() && idArt > 0) {
                 Artista artista = new Artista();
                 artista.setIdArtista(idArt);
                 artista.setNombreArtistico(rs.getString("nombre_artista"));
+                // Corregido: uso de setters para cumplir con el encapsulamiento
                 artista.setNacionalidad(rs.getString("nacionalidad"));
                 artista.setBiografia(rs.getString("biografia"));
                 vinilo.setArtista(artista);

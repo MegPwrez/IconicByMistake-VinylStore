@@ -11,6 +11,7 @@ public class Vinilo {
     private int stockActual;
     private int stockMinimo;
     private boolean activo;
+    private String urlFoto; // Campo agregado para la ruta o URL de la imagen
 
     // Llaves foráneas y Relaciones
     private int idGenero;
@@ -25,7 +26,7 @@ public class Vinilo {
     }
 
     public Vinilo(String codigoBarras, String tituloAlbum, Date fechaLanzamiento, double precio, 
-                  int stockActual, int stockMinimo, boolean activo, int idGenero, 
+                  int stockActual, int stockMinimo, boolean activo, String urlFoto, int idGenero, 
                   String nitDisquera, Integer idProveedor) {
         this.codigoBarras = codigoBarras;
         this.tituloAlbum = tituloAlbum;
@@ -34,12 +35,13 @@ public class Vinilo {
         this.stockActual = stockActual;
         this.stockMinimo = stockMinimo;
         this.activo = activo;
+        this.urlFoto = urlFoto;
         this.idGenero = idGenero;
         this.nitDisquera = nitDisquera;
         this.idProveedor = idProveedor;
     }
 
-    // Getters y Setters alineados con tu controlador y base de datos
+    // Getters y Setters
     public String getCodigoBarras() {
         return codigoBarras;
     }
@@ -94,6 +96,14 @@ public class Vinilo {
 
     public void setActivo(boolean activo) {
         this.activo = activo;
+    }
+
+    public String getUrlFoto() {
+        return urlFoto;
+    }
+
+    public void setUrlFoto(String urlFoto) {
+        this.urlFoto = urlFoto;
     }
 
     public int getIdGenero() {

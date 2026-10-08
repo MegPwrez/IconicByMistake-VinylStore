@@ -5,9 +5,11 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.sql.Date;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -53,7 +55,7 @@ public class ViniloController implements Initializable {
     @FXML private TextField txtFechaLanzamiento; 
     @FXML private TextField txtPrecio;
     @FXML private TextField txtStock;
-    @FXML private TextField txtStockMinimo; // Opcional en FXML si cuentas con el campo
+    @FXML private TextField txtStockMinimo; 
     @FXML private ComboBox<Artista> cmbArtista; 
     @FXML private ComboBox<Genero> cmbGenero;
     @FXML private ComboBox<Productor> cmbProductor;
@@ -65,9 +67,9 @@ public class ViniloController implements Initializable {
     @FXML private TableColumn<Vinilo, Date> colFecha; 
     @FXML private TableColumn<Vinilo, Double> colPrecio;
     @FXML private TableColumn<Vinilo, Integer> colStock;
-    @FXML private TableColumn<Vinilo, String> colArtista;
-    @FXML private TableColumn<Vinilo, String> colGenero;
-    @FXML private TableColumn<Vinilo, String> colProductor;
+    @FXML private TableColumn<Vinilo, Artista> colArtista;
+    @FXML private TableColumn<Vinilo, Genero> colGenero;
+    @FXML private TableColumn<Vinilo, Productor> colProductor;
     
     @FXML private Button btnNuevo;
     @FXML private Button btnEditar;
@@ -100,23 +102,22 @@ public class ViniloController implements Initializable {
         seleccionarFila();
         configurarBusqueda();
         
-        // 🌟 Agregado: Lanza la alerta de stock crítico al iniciar
+        // Alerta de stock crítico al iniciar (Alineada con stockActual <= 10)
         verificarStockCritico();
     }
 
-    // 🌟 NUEVO MÉTODO DE ALERTA PARA VINILO CONTROLLER
     private void verificarStockCritico() {
         try {
             List<Vinilo> criticos = viniloDAO.listarTodos().stream()
-                    .filter(v -> v.getStock() <= 10)
+                    .filter(v -> v.getStockActual() <= 10)
                     .collect(Collectors.toList());
 
             if (!criticos.isEmpty()) {
                 StringBuilder sb = new StringBuilder("Los siguientes vinilos tienen stock crítico (<= 10 unidades):\n");
                 for (Vinilo v : criticos) {
-                    sb.append("• ").append(v.getTitulo())
-                      .append(" (SKU: ").append(v.getSku())
-                      .append(") - Unidades: ").append(v.getStock()).append("\n");
+                    sb.append("• ").append(v.getTituloAlbum())
+                      .append(" (Código: ").append(v.getCodigoBarras())
+                      .append(") - Unidades: ").append(v.getStockActual()).append("\n");
                 }
 
                 Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -223,10 +224,23 @@ public class ViniloController implements Initializable {
                             }
                         }
 
-                        // Cargar foto si aplica
-                        urlFotoActual = null; // Si no manejas urlFoto en la clase Vinilo puedes omitirlo
+                        urlFotoActual = newSelection.getUrlFoto();
                         archivoFotoSeleccionado = null;
-                        imgPortada.setImage(null);
+                        
+                        if (urlFotoActual != null && !urlFotoActual.isEmpty()) {
+                            try {
+                                File archivoImg = new File(DIRECTORIO_FOTOS, urlFotoActual);
+                                if (archivoImg.exists()) {
+                                    imgPortada.setImage(new Image(archivoImg.toURI().toString()));
+                                } else {
+                                    imgPortada.setImage(null);
+                                }
+                            } catch (Exception e) {
+                                imgPortada.setImage(null);
+                            }
+                        } else {
+                            imgPortada.setImage(null);
+                        }
 
                         desactivarFormulario();
                     }
@@ -257,13 +271,14 @@ public class ViniloController implements Initializable {
             }
 
             String codigo = txtCodigoVinilo.getText().trim();
+            String nombreFoto = null;
             
             if (archivoFotoSeleccionado != null) {
                 String nombreOriginal = archivoFotoSeleccionado.getName();
                 String extension = nombreOriginal.contains(".")
                         ? nombreOriginal.substring(nombreOriginal.lastIndexOf('.') + 1)
                         : "jpg";
-                String nombreFoto = codigo.replaceAll("[^a-zA-Z0-9]", "_") + "." + extension;
+                nombreFoto = codigo.replaceAll("[^a-zA-Z0-9]", "_") + "." + extension;
                 File destino = new File(DIRECTORIO_FOTOS, nombreFoto);
                 Files.createDirectories(destino.getParentFile().toPath());
                 Files.copy(archivoFotoSeleccionado.toPath(), destino.toPath(), StandardCopyOption.REPLACE_EXISTING);
@@ -272,6 +287,15 @@ public class ViniloController implements Initializable {
             Vinilo vinilo = new Vinilo();
             vinilo.setCodigoBarras(codigo);
             vinilo.setTituloAlbum(txtTitulo.getText().trim());
+            
+            if (nombreFoto != null) {
+                vinilo.setUrlFoto(nombreFoto);
+            } else if (modoEdicion) {
+                Vinilo seleccionActual = tablaVinilos.getSelectionModel().getSelectedItem();
+                if (seleccionActual != null) {
+                    vinilo.setUrlFoto(seleccionActual.getUrlFoto());
+                }
+            }
             
             if (!txtFechaLanzamiento.getText().trim().isEmpty()) {
                 vinilo.setFechaLanzamiento(Date.valueOf(txtFechaLanzamiento.getText().trim()));
@@ -283,7 +307,7 @@ public class ViniloController implements Initializable {
             if (txtStockMinimo != null && !txtStockMinimo.getText().trim().isEmpty()) {
                 vinilo.setStockMinimo(Integer.parseInt(txtStockMinimo.getText().trim()));
             } else {
-                vinilo.setStockMinimo(0);
+                vinilo.setStockMinimo(2); 
             }
             
             vinilo.setActivo(true);
@@ -297,6 +321,9 @@ public class ViniloController implements Initializable {
             }
 
             vinilo.setProductor(cmbProductor.getValue());
+            if (cmbProductor.getValue() != null) {
+                vinilo.setNitDisquera(cmbProductor.getValue().getIdProductor());
+            }
 
             boolean guardado;
             if (modoEdicion) {
