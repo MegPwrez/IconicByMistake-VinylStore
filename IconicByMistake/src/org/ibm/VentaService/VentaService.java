@@ -13,7 +13,7 @@ import org.ibm.utils.Conexion;
 public class VentaService {
 
     public boolean validarStock(String codigoBarras, int cantidad) {
-        String sql = "{call sp_buscarvinilo(?)}";
+        String sql = "{call sp_buscarlinilo(?)}";
         try (Connection con = Conexion.getInstancia().conectar();
              CallableStatement cs = con.prepareCall(sql)) {
 

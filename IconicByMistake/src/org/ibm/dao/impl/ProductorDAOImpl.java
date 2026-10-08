@@ -16,7 +16,7 @@ public class ProductorDAOImpl implements ProductorDAO {
     @Override
     public List<Productor> listarTodos() {
         ArrayList<Productor> lista = new ArrayList<>();
-        String sql = "{call sp_listar_disqueras()}";
+        String sql = "{call sp_listardisqueras()}";
         
         try (Connection conexion = ConexionSingleton.getConexion();
              CallableStatement consulta = conexion.prepareCall(sql);
