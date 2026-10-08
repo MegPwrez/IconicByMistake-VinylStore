@@ -72,15 +72,15 @@ public class VinilosInventarioController implements Initializable {
     private void verificarStockCritico() {
         try {
             List<Vinilo> criticos = viniloDAO.listarTodos().stream()
-                    .filter(v -> v.getStock() <= 10)
+                    .filter(v -> v.getStockActual() <= 10)
                     .collect(Collectors.toList());
 
             if (!criticos.isEmpty()) {
                 StringBuilder sb = new StringBuilder("Los siguientes vinilos tienen stock crítico (<= 10 unidades):\n");
                 for (Vinilo v : criticos) {
-                    sb.append("• ").append(v.getTitulo())
-                      .append(" (SKU: ").append(v.getSku())
-                      .append(") - Unidades: ").append(v.getStock()).append("\n");
+                    sb.append("• ").append(v.getTituloAlbum())
+                      .append(" (SKU/Código: ").append(v.getCodigoBarras())
+                      .append(") - Unidades: ").append(v.getStockActual()).append("\n");
                 }
 
                 Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -95,10 +95,13 @@ public class VinilosInventarioController implements Initializable {
     }
 
     public void configurarTabla() {
-        colSku.setCellValueFactory(new PropertyValueFactory<>("sku"));
-        colTitulo.setCellValueFactory(new PropertyValueFactory<>("titulo"));
+        // Se apunta a "codigoBarras" en lugar de "sku" para coincidir con la propiedad del modelo Vinilo
+        colSku.setCellValueFactory(new PropertyValueFactory<>("codigoBarras"));
+        // Se apunta a "tituloAlbum" en lugar de "titulo"
+        colTitulo.setCellValueFactory(new PropertyValueFactory<>("tituloAlbum"));
         colPrecio.setCellValueFactory(new PropertyValueFactory<>("precio"));
-        colStock.setCellValueFactory(new PropertyValueFactory<>("stock"));
+        // Se apunta a "stockActual" en lugar de "stock"
+        colStock.setCellValueFactory(new PropertyValueFactory<>("stockActual"));
     }
 
     private void cargarTabla() {
@@ -119,10 +122,10 @@ public class VinilosInventarioController implements Initializable {
             vinilosFiltrados.setPredicate(p -> true);
         } else {
             vinilosFiltrados.setPredicate(vinilo ->
-                    (vinilo.getSku() != null && vinilo.getSku().toLowerCase().contains(busqueda))
-                    || (vinilo.getTitulo() != null && vinilo.getTitulo().toLowerCase().contains(busqueda))
+                    (vinilo.getCodigoBarras() != null && vinilo.getCodigoBarras().toLowerCase().contains(busqueda))
+                    || (vinilo.getTituloAlbum() != null && vinilo.getTituloAlbum().toLowerCase().contains(busqueda))
                     || String.valueOf(vinilo.getPrecio()).contains(busqueda)
-                    || String.valueOf(vinilo.getStock()).contains(busqueda));
+                    || String.valueOf(vinilo.getStockActual()).contains(busqueda));
         }
     }
 
@@ -134,7 +137,7 @@ public class VinilosInventarioController implements Initializable {
         });
     }
 
- private void mostrarImagenVinilo(Vinilo vinilo) {
+    private void mostrarImagenVinilo(Vinilo vinilo) {
         if (vinilo == null) {
             cargarImagenPorDefecto();
             return;
@@ -142,7 +145,7 @@ public class VinilosInventarioController implements Initializable {
 
         Image imagen = null;
         try {
-            // 1. PRIORIDAD MÁXIMA: Si el vinilo tiene una ruta de foto guardada directamente (ej. desde el FileChooser)
+            // 1. PRIORIDAD MÁXIMA: Si el vinilo tiene una ruta de foto guardada directamente
             if (vinilo.getUrlFoto() != null && !vinilo.getUrlFoto().trim().isEmpty()) {
                 String rutaFoto = vinilo.getUrlFoto().trim();
                 File archivoDirecto = new File(rutaFoto);
@@ -150,12 +153,10 @@ public class VinilosInventarioController implements Initializable {
                 if (archivoDirecto.exists()) {
                     imagen = new Image(archivoDirecto.toURI().toString());
                 } else {
-                    // Buscar de forma relativa al proyecto
                     File archivoRelativo = new File(System.getProperty("user.dir"), rutaFoto);
                     if (archivoRelativo.exists()) {
                         imagen = new Image(archivoRelativo.toURI().toString());
                     } else {
-                        // Buscar dentro de la carpeta general de imágenes por si solo guardó el nombre del archivo
                         File carpetaGeneral = new File("C:/gregory_jeronimo/imagenes");
                         if (!carpetaGeneral.exists()) {
                             carpetaGeneral = new File(System.getProperty("user.dir"), "imagenes");
@@ -168,15 +169,14 @@ public class VinilosInventarioController implements Initializable {
                 }
             }
 
-            // 2. RESPALDO INTELIGENTE: Si no hay urlFoto o no se encontró, usamos la búsqueda flexible por SKU o palabras clave del título
+            // 2. RESPALDO INTELIGENTE: Búsqueda flexible por código de barras o palabras clave del título
             if (imagen == null || imagen.isError()) {
-                String skuBusqueda = vinilo.getSku() != null ? vinilo.getSku().trim().toLowerCase().replaceAll("[^a-z0-9]", "") : "";
-                String tituloBusqueda = vinilo.getTitulo() != null ? vinilo.getTitulo().trim().toLowerCase().replaceAll("[^a-z0-9]", "") : "";
+                String skuBusqueda = vinilo.getCodigoBarras() != null ? vinilo.getCodigoBarras().trim().toLowerCase().replaceAll("[^a-z0-9]", "") : "";
+                String tituloBusqueda = vinilo.getTituloAlbum() != null ? vinilo.getTituloAlbum().trim().toLowerCase().replaceAll("[^a-z0-9]", "") : "";
                 
-                // Extraer palabra clave significativa (ignorando artículos)
                 String palabraClaveTitulo = "";
-                if (vinilo.getTitulo() != null && !vinilo.getTitulo().trim().isEmpty()) {
-                    String[] palabras = vinilo.getTitulo().trim().toLowerCase().split("[^a-z0-9]+");
+                if (vinilo.getTituloAlbum() != null && !vinilo.getTituloAlbum().trim().isEmpty()) {
+                    String[] palabras = vinilo.getTituloAlbum().trim().toLowerCase().split("[^a-z0-9]+");
                     for (String p : palabras) {
                         if (p.length() > 2 && !p.equals("the") && !p.equals("and") && !p.equals("for")) {
                             palabraClaveTitulo = p;
@@ -185,7 +185,7 @@ public class VinilosInventarioController implements Initializable {
                     }
                 }
 
-                File carpetaImagenes = new File("C:/gregory_jeronimo/imagenes");
+                File carpetaImagenes = new File("C:/Gabriel_Escobedo/imagenes");
                 if (!carpetaImagenes.exists()) {
                     carpetaImagenes = new File(System.getProperty("user.dir"), "imagenes");
                 }
@@ -222,12 +222,12 @@ public class VinilosInventarioController implements Initializable {
             if (imagen != null && !imagen.isError()) {
                 imgVinilo.setImage(imagen);
             } else {
-                System.out.println("⚠️ No se encontró imagen para el vinilo: " + vinilo.getTitulo() + " (SKU: " + vinilo.getSku() + ")");
+                System.out.println("⚠️ No se encontró imagen para el vinilo: " + vinilo.getTituloAlbum() + " (Código: " + vinilo.getCodigoBarras() + ")");
                 cargarImagenPorDefecto();
             }
 
         } catch (Exception e) {
-            System.err.println("❌ Error al procesar la imagen del vinilo [" + vinilo.getTitulo() + "]: " + e.getMessage());
+            System.err.println("❌ Error al procesar la imagen del vinilo [" + vinilo.getTituloAlbum() + "]: " + e.getMessage());
             cargarImagenPorDefecto();
         }
     }
