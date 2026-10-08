@@ -133,7 +133,10 @@ public class DashboardAdminController implements Initializable {
     @FXML
     private void irACatalogo() {
 
-        System.out.println("Ir a catálogo");
+       cambiarVista(
+                "/org/ibm/view/CatalogoView.fxml",
+                "Iconic By Mistake - Cambiar contraseña"
+        );
     }
 
     @FXML
