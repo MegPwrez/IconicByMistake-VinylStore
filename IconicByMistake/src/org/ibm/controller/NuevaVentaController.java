@@ -186,49 +186,46 @@ public class NuevaVentaController implements Initializable {
         lblMensaje.setText("");
     }
 
-    @FXML  
-    private void handleRegistrarVenta() {
-        try {
-            Usuario usuarioActual = SesionUsuario.getInstancia().getUsuarioActual();
-            if (usuarioActual == null) {
-                throw new ValidacionException("No hay una sesión de usuario activa. Inicie sesión nuevamente.");
-            }
-            Cliente clienteSeleccionado = cmbCliente.getValue();
-            if (clienteSeleccionado == null) {
-                throw new ValidacionException("Seleccione el cliente de la venta.");
-            }
-            if (lineasVenta.isEmpty()) {
-                throw new ValidacionException("Agregue al menos un vinilo a la venta.");
-            }
-
-            int idUsuario = usuarioActual.getIdUsuario();
-            long cuiCliente = clienteSeleccionado.getCui();
-            double totalCalculado = calcularTotal();
-
-            Venta nuevaVenta = new Venta();
-            nuevaVenta.setSubTotal(String.valueOf(totalCalculado));
-            nuevaVenta.setDescuento(0.00);
-            nuevaVenta.setTotalVenta(totalCalculado);
-            nuevaVenta.setCuiCliente(cuiCliente);
-            nuevaVenta.setId_usuario(idUsuario);
-            
-            boolean exito = ventaService.procesarVenta(nuevaVenta, lineasVenta);
-            if (!exito) {
-                mostrarError("No se pudo registrar la venta. Verifique el stock.");
-                return;
-            }
-            int idVentaGenerada = nuevaVenta.getIdVenta();
-            limpiarVenta();
-            cargarCombos();
-
-            mostrarInformacion("Venta #" + idVentaGenerada + " registrada exitosamente.");
-        } catch (ValidacionException e) {
-            mostrarAdvertencia(e.getMessage());
-            lblMensaje.setText(e.getMessage());
-        } catch (Exception e) {
-            mostrarError("Error al registrar la venta: " + e.getMessage());
+@FXML
+private void handleRegistrarVenta() {
+    try {
+        Usuario usuarioActual = SesionUsuario.getInstancia().getUsuarioActual();
+        if (usuarioActual == null) {
+            throw new ValidacionException("No hay una sesión de usuario activa. Inicie sesión nuevamente.");
         }
+        if (cmbCliente.getValue() == null) {
+            throw new ValidacionException("Seleccione el cliente de la venta.");
+        }
+        if (lineasVenta.isEmpty()) {
+            throw new ValidacionException("Agregue al menos un vinilo a la venta.");
+        }
+
+        int idUsuario = usuarioActual.getIdUsuario();
+        long cuiCliente = cmbCliente.getValue().getCui();
+        double totalCalculado = calcularTotal();
+
+        Venta nuevaVenta = new Venta();
+        nuevaVenta.setSubTotal(String.valueOf(totalCalculado));
+        nuevaVenta.setDescuento(0.00);
+        nuevaVenta.setTotalVenta(totalCalculado);
+        nuevaVenta.setCuiCliente(cuiCliente);
+        nuevaVenta.setId_usuario(idUsuario);
+
+        boolean exito = ventaService.procesarVenta(nuevaVenta, lineasVenta);
+        if (!exito) {
+            mostrarError("No se pudo registrar la venta. Verifique el stock.");
+            return;
+        }
+        FacturaController.setNoVentaSeleccionada(nuevaVenta.getIdVenta());
+        Main.cambiarVista("/org/ibm/view/FacturaView.fxml");
+
+    } catch (ValidacionException e) {
+        mostrarAdvertencia(e.getMessage());
+        lblMensaje.setText(e.getMessage());
+    } catch (Exception e) {
+        mostrarError("Error al registrar la venta: " + e.getMessage());
     }
+}
 
     private void limpiarVenta() {
         lineasVenta.clear();

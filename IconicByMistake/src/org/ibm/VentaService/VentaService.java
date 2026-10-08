@@ -20,7 +20,7 @@ public class VentaService {
             cs.setString(1, codigoBarras);
             try (ResultSet rs = cs.executeQuery()) {
                 if (rs.next()) {
-                    int stockActual = rs.getInt("stock");
+                    int stockActual = rs.getInt("stock_actual");
                     return stockActual >= cantidad;
                 }
             }
