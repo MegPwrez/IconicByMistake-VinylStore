@@ -22,34 +22,24 @@ public class DashboardAdminController implements Initializable {
 
     @FXML
     private Label lblBienvenida;
-
     @FXML
     private Label lblRol;
-
     @FXML
     private Label lblVentasDia;
-
     @FXML
     private Label lblVentasMes;
-
     @FXML
     private Label lblViniloMasVendido;
-
     @FXML
     private Button btnUsuarios;
-
     @FXML
     private Button btnReportes;
-
     @FXML
     private Button btnCatalogo;
-
     @FXML
     private Button btnCerrarSesion;
-
     @FXML
     private Button btnCambiarContrasena;
-
     private DashboardAdminDAO dashboardAdminDAO;
 
     @Override
@@ -127,7 +117,10 @@ public class DashboardAdminController implements Initializable {
     @FXML
     private void irAReportes() {
 
-        System.out.println("Ir a reportes");
+        cambiarVista(
+                "/org/ibm/view/ListaVentasView.fxml",
+                "Iconic By Mistake - Reportes"
+        );
     }
 
     @FXML
