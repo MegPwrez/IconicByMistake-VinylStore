@@ -54,6 +54,7 @@
             <Button alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleDetalleVentas" style="-fx-background-color: transparent; -fx-text-fill: #F0F5F3; -fx-font-size: 13px; -fx-cursor: hand;" text="📋  Detalle Ventas" />
             <Button alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleListaVentas" style="-fx-background-color: transparent; -fx-text-fill: #F0F5F3; -fx-font-size: 13px; -fx-cursor: hand;" text="📓  Lista de Ventas" />
             <Button alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#handleClientes" style="-fx-background-color: transparent; -fx-text-fill: #F0F5F3; -fx-font-size: 13px; -fx-cursor: hand;" text="👤  Clientes" />
+            <Button alignment="BASELINE_LEFT" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#irACatalogo" style="-fx-background-color: transparent; -fx-text-fill: #F0F5F3; -fx-font-size: 13px; -fx-cursor: hand;" text="🎶 Ver Catalogo" />
             <Region VBox.vgrow="ALWAYS" />
             <Separator style="-fx-opacity: 0.3;" />
          </children>
@@ -80,7 +81,7 @@
                            <children>
                               <Label style="-fx-font-size: 30px;" text="➕" />
                               <Label style="-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #071A09;" text="Agregar Venta" />
-                              <Label text="Registrar una nueva&#10;venta o factura" textAlignment="CENTER" style="-fx-text-fill: #658273; -fx-font-size: 11px;" />
+                              <Label style="-fx-text-fill: #658273; -fx-font-size: 11px;" text="Registrar una nueva&#10;venta o factura" textAlignment="CENTER" />
                            </children>
                         </VBox>
                      </graphic>
@@ -91,7 +92,7 @@
                            <children>
                               <Label style="-fx-font-size: 30px;" text="📋" />
                               <Label style="-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #071A09;" text="Detalle de Ventas" />
-                              <Label text="Líneas de cada&#10;venta registrada" textAlignment="CENTER" style="-fx-text-fill: #658273; -fx-font-size: 11px;" />
+                              <Label style="-fx-text-fill: #658273; -fx-font-size: 11px;" text="Líneas de cada&#10;venta registrada" textAlignment="CENTER" />
                            </children>
                         </VBox>
                      </graphic>
@@ -102,7 +103,7 @@
                            <children>
                               <Label style="-fx-font-size: 30px;" text="📓" />
                               <Label style="-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #071A09;" text="Lista de Ventas" />
-                              <Label text="Consultar ventas&#10;registradas" textAlignment="CENTER" style="-fx-text-fill: #658273; -fx-font-size: 11px;" />
+                              <Label style="-fx-text-fill: #658273; -fx-font-size: 11px;" text="Consultar ventas&#10;registradas" textAlignment="CENTER" />
                            </children>
                         </VBox>
                      </graphic>
@@ -113,7 +114,7 @@
                            <children>
                               <Label style="-fx-font-size: 30px;" text="📊" />
                               <Label style="-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #071A09;" text="Resumen del Día" />
-                              <Label text="Consulta las ventas&#10;hechas hoy" textAlignment="CENTER" style="-fx-text-fill: #658273; -fx-font-size: 11px;" />
+                              <Label style="-fx-text-fill: #658273; -fx-font-size: 11px;" text="Consulta las ventas&#10;hechas hoy" textAlignment="CENTER" />
                            </children>
                         </VBox>
                      </graphic>
@@ -124,7 +125,7 @@
                            <children>
                               <Label style="-fx-font-size: 30px;" text="👤" />
                               <Label style="-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #071A09;" text="Clientes" />
-                              <Label text="Crea o gestiona&#10;tus clientes" textAlignment="CENTER" style="-fx-text-fill: #658273; -fx-font-size: 11px;" />
+                              <Label style="-fx-text-fill: #658273; -fx-font-size: 11px;" text="Crea o gestiona&#10;tus clientes" textAlignment="CENTER" />
                            </children>
                         </VBox>
                      </graphic>

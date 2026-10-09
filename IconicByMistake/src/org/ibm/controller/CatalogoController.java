@@ -39,15 +39,24 @@ public class CatalogoController implements Initializable {
 
     private static final Logger LOGGER = Logger.getLogger(CatalogoController.class.getName());
 
-    @FXML private TextField txtBuscar;
-    @FXML private TilePane tileCatalogo;
-    @FXML private ImageView imgDetalle;
-    @FXML private Label lblDetalleTitulo;
-    @FXML private Label lblDetalleCodigo;
-    @FXML private Label lblDetallePrecio;
-    @FXML private Label lblDetalleStock;
-    @FXML private Label lblDetalleArtista;
-    @FXML private Label lblDetalleMensaje;
+    @FXML
+    private TextField txtBuscar;
+    @FXML
+    private TilePane tileCatalogo;
+    @FXML
+    private ImageView imgDetalle;
+    @FXML
+    private Label lblDetalleTitulo;
+    @FXML
+    private Label lblDetalleCodigo;
+    @FXML
+    private Label lblDetallePrecio;
+    @FXML
+    private Label lblDetalleStock;
+    @FXML
+    private Label lblDetalleArtista;
+    @FXML
+    private Label lblDetalleMensaje;
 
     private final ViniloDAO viniloDAO = new ViniloDAOImpl();
     private final ObservableList<Vinilo> listaVinilos = FXCollections.observableArrayList();
@@ -62,13 +71,27 @@ public class CatalogoController implements Initializable {
         if (!vinilosFiltrados.isEmpty()) {
             mostrarDetalle(vinilosFiltrados.get(0));
         } else {
-            if (imgDetalle != null) imgDetalle.setImage(null);
-            if (lblDetalleTitulo != null) lblDetalleTitulo.setText("");
-            if (lblDetalleCodigo != null) lblDetalleCodigo.setText("");
-            if (lblDetallePrecio != null) lblDetallePrecio.setText("");
-            if (lblDetalleStock != null) lblDetalleStock.setText("");
-            if (lblDetalleArtista != null) lblDetalleArtista.setText("");
-            if (lblDetalleMensaje != null) lblDetalleMensaje.setText("Seleccione un vinilo de la cuadrícula para ver su detalle.");
+            if (imgDetalle != null) {
+                imgDetalle.setImage(null);
+            }
+            if (lblDetalleTitulo != null) {
+                lblDetalleTitulo.setText("");
+            }
+            if (lblDetalleCodigo != null) {
+                lblDetalleCodigo.setText("");
+            }
+            if (lblDetallePrecio != null) {
+                lblDetallePrecio.setText("");
+            }
+            if (lblDetalleStock != null) {
+                lblDetalleStock.setText("");
+            }
+            if (lblDetalleArtista != null) {
+                lblDetalleArtista.setText("");
+            }
+            if (lblDetalleMensaje != null) {
+                lblDetalleMensaje.setText("Seleccione un vinilo de la cuadrícula para ver su detalle.");
+            }
         }
     }
 
@@ -101,7 +124,9 @@ public class CatalogoController implements Initializable {
     }
 
     private void renderizar() {
-        if (tileCatalogo == null) return;
+        if (tileCatalogo == null) {
+            return;
+        }
         tileCatalogo.getChildren().clear();
         for (Vinilo vinilo : vinilosFiltrados) {
             ImageView imagen = new ImageView(cargarImagenVinilo(vinilo));
@@ -129,7 +154,8 @@ public class CatalogoController implements Initializable {
     }
 
     /**
-     * Lógica de búsqueda flexible e inteligente de imágenes replicada de Inventario.
+     * Lógica de búsqueda flexible e inteligente de imágenes replicada de
+     * Inventario.
      */
     private Image cargarImagenVinilo(Vinilo vinilo) {
         if (vinilo == null) {
@@ -235,30 +261,64 @@ public class CatalogoController implements Initializable {
     }
 
     private void mostrarDetalle(Vinilo vinilo) {
-        if (imgDetalle != null) imgDetalle.setImage(cargarImagenVinilo(vinilo));
-        if (lblDetalleTitulo != null) lblDetalleTitulo.setText(vinilo.getTituloAlbum());
-        if (lblDetalleCodigo != null) lblDetalleCodigo.setText("Código: " + vinilo.getCodigoBarras());
-        if (lblDetallePrecio != null) lblDetallePrecio.setText("Precio: $" + String.format("%.2f", vinilo.getPrecio()));
-        if (lblDetalleStock != null) lblDetalleStock.setText("Stock: " + vinilo.getStockActual());
+        if (imgDetalle != null) {
+            imgDetalle.setImage(cargarImagenVinilo(vinilo));
+        }
+        if (lblDetalleTitulo != null) {
+            lblDetalleTitulo.setText(vinilo.getTituloAlbum());
+        }
+        if (lblDetalleCodigo != null) {
+            lblDetalleCodigo.setText("Código: " + vinilo.getCodigoBarras());
+        }
+        if (lblDetallePrecio != null) {
+            lblDetallePrecio.setText("Precio: $" + String.format("%.2f", vinilo.getPrecio()));
+        }
+        if (lblDetalleStock != null) {
+            lblDetalleStock.setText("Stock: " + vinilo.getStockActual());
+        }
 
         if (lblDetalleArtista != null) {
             String nombreArtista = (vinilo.getArtista() != null) ? vinilo.getArtista().getNombreArtistico() : "Desconocido";
             lblDetalleArtista.setText("Artista: " + nombreArtista);
         }
 
-        if (lblDetalleMensaje != null) lblDetalleMensaje.setText("");
+        if (lblDetalleMensaje != null) {
+            lblDetalleMensaje.setText("");
+        }
     }
 
     @FXML
     private void handleVolver(ActionEvent evento) {
         try {
             Usuario usuario = SesionUsuario.getInstancia().getUsuarioActual();
-            String ruta = "/org/ibm/view/DashboardBodegaView.fxml";
-            String titulo = "Iconic By Mistake - Dashboard Bodega";
-            if (usuario != null && "admin".equalsIgnoreCase(usuario.getRol())) {
-                ruta = "/org/ibm/view/DashboardAdminView.fxml";
-                titulo = "Iconic By Mistake - Dashboard Administrador";
+            if (usuario == null || usuario.getRol() == null) {
+                mostrarError("No se encontró una sesión de usuario válida.");
+                return;
             }
+            String rol = usuario.getRol().trim().toLowerCase();
+            String ruta;
+            String titulo;
+
+            switch (rol) {
+                case "admin":
+                case "administrador":
+                    ruta = "/org/ibm/view/DashboardAdminView.fxml";
+                    titulo = "Iconic By Mistake - Dashboard Administrador";
+                    break;
+                case "cajero":
+                    ruta = "/org/ibm/view/CajeroDashboardView.fxml";
+                    titulo = "Iconic By Mistake - Dashboard Cajero";
+                    break;
+                case "empleado":
+                    ruta = "/org/ibm/view/DashboardBodegaView.fxml";
+                    titulo = "Iconic By Mistake - Dashboard Bodega";
+                    break;
+                default:
+                    // Si el rol no es reconocido, mandamos al login o mostramos un error claro en lugar de un AssertionError
+                    mostrarError("Rol de usuario no reconocido: " + usuario.getRol());
+                    return;
+            }
+
             Stage escenarioPrincipal = (Stage) ((Node) evento.getSource()).getScene().getWindow();
             FXMLLoader loader = new FXMLLoader(getClass().getResource(ruta));
             Parent root = loader.load();
@@ -266,6 +326,7 @@ public class CatalogoController implements Initializable {
             escenarioPrincipal.setTitle(titulo);
             escenarioPrincipal.setScene(scene);
             escenarioPrincipal.show();
+            
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "Error al volver al dashboard", e);
             mostrarError("Error al volver al menú: " + e.getMessage());

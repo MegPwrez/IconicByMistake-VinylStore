@@ -69,7 +69,13 @@ public class CajeroDashboardController implements Initializable {
         log.info("Navegando a la pantalla de Detalle de Venta.");
         navegar("/org/ibm/view/DetalleVentaView.fxml");
     }
-
+    
+    @FXML
+    public void irACatalogo(ActionEvent evento) {
+        log.info("Navegando a la pantalla de Detalle de Venta.");
+        navegar("/org/ibm/view/CatalogoView.fxml");
+    }
+    
     @FXML
     public void handleListaVentas(ActionEvent event) {
         log.info("Navegando a Lista de Ventas.");
