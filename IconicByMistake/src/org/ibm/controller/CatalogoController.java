@@ -150,7 +150,7 @@ public class CatalogoController implements Initializable {
                     if (archivoRelativo.exists()) {
                         imagen = new Image(archivoRelativo.toURI().toString());
                     } else {
-                        File carpetaGeneral = new File("C:/gregory_jeronimo/imagenes");
+                        File carpetaGeneral = new File("C:/ge/imagenes");
                         if (!carpetaGeneral.exists()) {
                             carpetaGeneral = new File(System.getProperty("user.dir"), "imagenes");
                         }
@@ -178,7 +178,7 @@ public class CatalogoController implements Initializable {
                     }
                 }
 
-                File carpetaImagenes = new File("C:/gregory_jeronimo/imagenes");
+                File carpetaImagenes = new File("C:/ge/imagenes");
                 if (!carpetaImagenes.exists()) {
                     carpetaImagenes = new File(System.getProperty("user.dir"), "imagenes");
                 }

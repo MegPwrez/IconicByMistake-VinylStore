@@ -334,7 +334,7 @@ public class NuevaVentaController implements Initializable {
                         );
 
                     } else {
-                        File carpetaGeneral = new File("C:/Ge/imagenes");
+                        File carpetaGeneral = new File("C:/ge/imagenes");
 
                         if (!carpetaGeneral.exists()) {
                             carpetaGeneral = new File(
@@ -386,7 +386,7 @@ public class NuevaVentaController implements Initializable {
                     }
                 }
 
-                File carpetaImagenes = new File("C:/Ge/imagenes");
+                File carpetaImagenes = new File("C:/ge/imagenes");
 
                 if (!carpetaImagenes.exists()) {
                     carpetaImagenes = new File(
