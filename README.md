@@ -65,3 +65,5 @@ Sigue estos pasos para clonar y abrir el proyecto en **Apache Netbeans**:
 1. **Clonar el repositorio:**
    ```bash
    git clone [https://github.com/tu-usuario/vinilooo-store.git](https://github.com/tu-usuario/vinilooo-store.git)
+2. ** Abrir Tablero para ver los sprints y como avazamos con el proyecto**
+https://trello.com/invite/b/6ab6a372a9fcb72bda992dfb/ATTIcd52a0b8d8922c8dc093270737f02e46402C437C/vinylstore-proyectofinal
