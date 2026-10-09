@@ -185,7 +185,7 @@ public class VinilosInventarioController implements Initializable {
                     }
                 }
 
-                File carpetaImagenes = new File("C:/Gabriel_Escobedo/imagenes");
+                File carpetaImagenes = new File("C:/gregory_jeronimo/imagenes");
                 if (!carpetaImagenes.exists()) {
                     carpetaImagenes = new File(System.getProperty("user.dir"), "imagenes");
                 }

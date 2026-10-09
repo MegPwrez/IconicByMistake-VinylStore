@@ -32,6 +32,8 @@ import javafx.stage.Stage;
 import org.ibm.dao.ViniloDAO;
 import org.ibm.dao.impl.ViniloDAOImpl;
 import org.ibm.model.Vinilo;
+import org.ibm.model.Usuario;
+import org.ibm.utils.SesionUsuario;
 
 public class CatalogoController implements Initializable {
 
@@ -55,13 +57,19 @@ public class CatalogoController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         cargarCatalogo();
         configurarBusqueda();
-        if (imgDetalle != null) imgDetalle.setImage(null);
-        if (lblDetalleTitulo != null) lblDetalleTitulo.setText("");
-        if (lblDetalleCodigo != null) lblDetalleCodigo.setText("");
-        if (lblDetallePrecio != null) lblDetallePrecio.setText("");
-        if (lblDetalleStock != null) lblDetalleStock.setText("");
-        if (lblDetalleArtista != null) lblDetalleArtista.setText("");
-        if (lblDetalleMensaje != null) lblDetalleMensaje.setText("Seleccione un vinilo de la cuadrícula para ver su detalle.");
+
+        // Seleccionar y mostrar el detalle del primer vinilo automáticamente al abrir si existe
+        if (!vinilosFiltrados.isEmpty()) {
+            mostrarDetalle(vinilosFiltrados.get(0));
+        } else {
+            if (imgDetalle != null) imgDetalle.setImage(null);
+            if (lblDetalleTitulo != null) lblDetalleTitulo.setText("");
+            if (lblDetalleCodigo != null) lblDetalleCodigo.setText("");
+            if (lblDetallePrecio != null) lblDetallePrecio.setText("");
+            if (lblDetalleStock != null) lblDetalleStock.setText("");
+            if (lblDetalleArtista != null) lblDetalleArtista.setText("");
+            if (lblDetalleMensaje != null) lblDetalleMensaje.setText("Seleccione un vinilo de la cuadrícula para ver su detalle.");
+        }
     }
 
     private void cargarCatalogo() {
@@ -120,15 +128,97 @@ public class CatalogoController implements Initializable {
         }
     }
 
+    /**
+     * Lógica de búsqueda flexible e inteligente de imágenes replicada de Inventario.
+     */
     private Image cargarImagenVinilo(Vinilo vinilo) {
-        if (vinilo.getCodigoBarras() == null || vinilo.getCodigoBarras().trim().isEmpty()) {
+        if (vinilo == null) {
             return crearImagenPlaceholder();
         }
-        String nombreFoto = vinilo.getCodigoBarras().replaceAll("[^a-zA-Z0-9]", "_") + ".jpg";
-        File foto = new File("src/imagenes", nombreFoto);
-        if (foto.exists()) {
-            return new Image(foto.toURI().toString());
+
+        Image imagen = null;
+        try {
+            // 1. PRIORIDAD MÁXIMA: Si el vinilo tiene una ruta de foto guardada directamente
+            if (vinilo.getUrlFoto() != null && !vinilo.getUrlFoto().trim().isEmpty()) {
+                String rutaFoto = vinilo.getUrlFoto().trim();
+                File archivoDirecto = new File(rutaFoto);
+
+                if (archivoDirecto.exists()) {
+                    imagen = new Image(archivoDirecto.toURI().toString());
+                } else {
+                    File archivoRelativo = new File(System.getProperty("user.dir"), rutaFoto);
+                    if (archivoRelativo.exists()) {
+                        imagen = new Image(archivoRelativo.toURI().toString());
+                    } else {
+                        File carpetaGeneral = new File("C:/gregory_jeronimo/imagenes");
+                        if (!carpetaGeneral.exists()) {
+                            carpetaGeneral = new File(System.getProperty("user.dir"), "imagenes");
+                        }
+                        File archivoEnCarpeta = new File(carpetaGeneral, rutaFoto);
+                        if (archivoEnCarpeta.exists()) {
+                            imagen = new Image(archivoEnCarpeta.toURI().toString());
+                        }
+                    }
+                }
+            }
+
+            // 2. RESPALDO INTELIGENTE: Búsqueda flexible por código de barras o palabras clave del título
+            if (imagen == null || imagen.isError()) {
+                String skuBusqueda = vinilo.getCodigoBarras() != null ? vinilo.getCodigoBarras().trim().toLowerCase().replaceAll("[^a-z0-9]", "") : "";
+                String tituloBusqueda = vinilo.getTituloAlbum() != null ? vinilo.getTituloAlbum().trim().toLowerCase().replaceAll("[^a-z0-9]", "") : "";
+
+                String palabraClaveTitulo = "";
+                if (vinilo.getTituloAlbum() != null && !vinilo.getTituloAlbum().trim().isEmpty()) {
+                    String[] palabras = vinilo.getTituloAlbum().trim().toLowerCase().split("[^a-z0-9]+");
+                    for (String p : palabras) {
+                        if (p.length() > 2 && !p.equals("the") && !p.equals("and") && !p.equals("for")) {
+                            palabraClaveTitulo = p;
+                            break;
+                        }
+                    }
+                }
+
+                File carpetaImagenes = new File("C:/gregory_jeronimo/imagenes");
+                if (!carpetaImagenes.exists()) {
+                    carpetaImagenes = new File(System.getProperty("user.dir"), "imagenes");
+                }
+
+                File imagenEncontrada = null;
+                if (carpetaImagenes.exists() && carpetaImagenes.isDirectory()) {
+                    File[] archivos = carpetaImagenes.listFiles();
+                    if (archivos != null) {
+                        for (File archivo : archivos) {
+                            String nombreCompleto = archivo.getName().toLowerCase();
+                            String nombreSinExt = nombreCompleto.contains(".") ? nombreCompleto.substring(0, nombreCompleto.lastIndexOf('.')) : nombreCompleto;
+                            String nombreArchivoLimpio = nombreSinExt.replaceAll("[^a-z0-9]", "");
+
+                            boolean coincideSku = !skuBusqueda.isEmpty() && nombreArchivoLimpio.contains(skuBusqueda);
+                            boolean coincideTitulo = !tituloBusqueda.isEmpty() && (nombreArchivoLimpio.contains(tituloBusqueda) || tituloBusqueda.contains(nombreArchivoLimpio));
+                            boolean coincidePalabra = !palabraClaveTitulo.isEmpty() && nombreArchivoLimpio.contains(palabraClaveTitulo);
+
+                            if (coincideSku || coincideTitulo || coincidePalabra) {
+                                imagenEncontrada = archivo;
+                                if (coincideSku || coincideTitulo) {
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (imagenEncontrada != null && imagenEncontrada.exists()) {
+                    imagen = new Image(imagenEncontrada.toURI().toString());
+                }
+            }
+
+            if (imagen != null && !imagen.isError()) {
+                return imagen;
+            }
+
+        } catch (Exception e) {
+            // Ignorar y retornar placeholder por defecto
         }
+
         return crearImagenPlaceholder();
     }
 
@@ -150,23 +240,30 @@ public class CatalogoController implements Initializable {
         if (lblDetalleCodigo != null) lblDetalleCodigo.setText("Código: " + vinilo.getCodigoBarras());
         if (lblDetallePrecio != null) lblDetallePrecio.setText("Precio: $" + String.format("%.2f", vinilo.getPrecio()));
         if (lblDetalleStock != null) lblDetalleStock.setText("Stock: " + vinilo.getStockActual());
-        
+
         if (lblDetalleArtista != null) {
             String nombreArtista = (vinilo.getArtista() != null) ? vinilo.getArtista().getNombreArtistico() : "Desconocido";
             lblDetalleArtista.setText("Artista: " + nombreArtista);
         }
-        
+
         if (lblDetalleMensaje != null) lblDetalleMensaje.setText("");
     }
 
     @FXML
     private void handleVolver(ActionEvent evento) {
         try {
+            Usuario usuario = SesionUsuario.getInstancia().getUsuarioActual();
+            String ruta = "/org/ibm/view/DashboardBodegaView.fxml";
+            String titulo = "Iconic By Mistake - Dashboard Bodega";
+            if (usuario != null && "admin".equalsIgnoreCase(usuario.getRol())) {
+                ruta = "/org/ibm/view/DashboardAdminView.fxml";
+                titulo = "Iconic By Mistake - Dashboard Administrador";
+            }
             Stage escenarioPrincipal = (Stage) ((Node) evento.getSource()).getScene().getWindow();
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/ibm/view/DashboardBodegaView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(ruta));
             Parent root = loader.load();
             Scene scene = new Scene(root);
-            escenarioPrincipal.setTitle("Iconic By Mistake - Dashboard Bodega");
+            escenarioPrincipal.setTitle(titulo);
             escenarioPrincipal.setScene(scene);
             escenarioPrincipal.show();
         } catch (Exception e) {

@@ -1,6 +1,7 @@
 package org.ibm.controller;
  
 import java.io.File;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
@@ -99,7 +100,13 @@ public class ViniloController implements Initializable {
         tablaVinilos.setItems(vinilosFiltrados);
         seleccionarFila();
         configurarBusqueda();
-        // Alerta de stock crítico al iniciar (Alineada con stockActual <= 10)
+        
+        // Seleccionar el primer elemento por defecto para que cargue su imagen al abrir la vista
+        if (!tablaVinilos.getItems().isEmpty()) {
+            tablaVinilos.getSelectionModel().selectFirst();
+        }
+
+        // Alerta de stock crítico al iniciar
         verificarStockCritico();
     }
  
@@ -220,24 +227,122 @@ public class ViniloController implements Initializable {
  
                         urlFotoActual = newSelection.getUrlFoto();
                         archivoFotoSeleccionado = null;
-                        if (urlFotoActual != null && !urlFotoActual.isEmpty()) {
-                            try {
-                                File archivoImg = new File(DIRECTORIO_FOTOS, urlFotoActual);
-                                if (archivoImg.exists()) {
-                                    imgPortada.setImage(new Image(archivoImg.toURI().toString()));
-                                } else {
-                                    imgPortada.setImage(null);
-                                }
-                            } catch (Exception e) {
-                                imgPortada.setImage(null);
-                            }
-                        } else {
-                            imgPortada.setImage(null);
-                        }
- 
+                        
+                        // Cargar la imagen utilizando el mismo sistema robusto de inventario
+                        mostrarImagenVinilo(newSelection);
+
                         desactivarFormulario();
                     }
                 });
+    }
+ 
+    /**
+     * Método inteligente incorporado desde Inventario para cargar la imagen de manera automática y flexible.
+     */
+    private void mostrarImagenVinilo(Vinilo vinilo) {
+        if (vinilo == null) {
+            cargarImagenPorDefecto();
+            return;
+        }
+
+        Image imagen = null;
+        try {
+            // 1. PRIORIDAD MÁXIMA: Si el vinilo tiene una ruta de foto guardada directamente
+            if (vinilo.getUrlFoto() != null && !vinilo.getUrlFoto().trim().isEmpty()) {
+                String rutaFoto = vinilo.getUrlFoto().trim();
+                File archivoDirecto = new File(rutaFoto);
+                
+                if (archivoDirecto.exists()) {
+                    imagen = new Image(archivoDirecto.toURI().toString());
+                } else {
+                    File archivoRelativo = new File(System.getProperty("user.dir"), rutaFoto);
+                    if (archivoRelativo.exists()) {
+                        imagen = new Image(archivoRelativo.toURI().toString());
+                    } else {
+                        File carpetaGeneral = new File("C:/gregory_jeronimo/imagenes");
+                        if (!carpetaGeneral.exists()) {
+                            carpetaGeneral = new File(System.getProperty("user.dir"), "imagenes");
+                        }
+                        File archivoEnCarpeta = new File(carpetaGeneral, rutaFoto);
+                        if (archivoEnCarpeta.exists()) {
+                            imagen = new Image(archivoEnCarpeta.toURI().toString());
+                        }
+                    }
+                }
+            }
+
+            // 2. RESPALDO INTELIGENTE: Búsqueda flexible por código de barras o palabras clave del título
+            if (imagen == null || imagen.isError()) {
+                String skuBusqueda = vinilo.getCodigoBarras() != null ? vinilo.getCodigoBarras().trim().toLowerCase().replaceAll("[^a-z0-9]", "") : "";
+                String tituloBusqueda = vinilo.getTituloAlbum() != null ? vinilo.getTituloAlbum().trim().toLowerCase().replaceAll("[^a-z0-9]", "") : "";
+                
+                String palabraClaveTitulo = "";
+                if (vinilo.getTituloAlbum() != null && !vinilo.getTituloAlbum().trim().isEmpty()) {
+                    String[] palabras = vinilo.getTituloAlbum().trim().toLowerCase().split("[^a-z0-9]+");
+                    for (String p : palabras) {
+                        if (p.length() > 2 && !p.equals("the") && !p.equals("and") && !p.equals("for")) {
+                            palabraClaveTitulo = p;
+                            break;
+                        }
+                    }
+                }
+
+                File carpetaImagenes = new File("C:/gregory_jeronimo/imagenes");
+                if (!carpetaImagenes.exists()) {
+                    carpetaImagenes = new File(System.getProperty("user.dir"), "imagenes");
+                }
+
+                File imagenEncontrada = null;
+                if (carpetaImagenes.exists() && carpetaImagenes.isDirectory()) {
+                    File[] archivos = carpetaImagenes.listFiles();
+                    if (archivos != null) {
+                        for (File archivo : archivos) {
+                            String nombreCompleto = archivo.getName().toLowerCase();
+                            String nombreSinExt = nombreCompleto.contains(".") ? nombreCompleto.substring(0, nombreCompleto.lastIndexOf('.')) : nombreCompleto;
+                            String nombreArchivoLimpio = nombreSinExt.replaceAll("[^a-z0-9]", "");
+                            
+                            boolean coincideSku = !skuBusqueda.isEmpty() && nombreArchivoLimpio.contains(skuBusqueda);
+                            boolean coincideTitulo = !tituloBusqueda.isEmpty() && (nombreArchivoLimpio.contains(tituloBusqueda) || tituloBusqueda.contains(nombreArchivoLimpio));
+                            boolean coincidePalabra = !palabraClaveTitulo.isEmpty() && nombreArchivoLimpio.contains(palabraClaveTitulo);
+
+                            if (coincideSku || coincideTitulo || coincidePalabra) {
+                                imagenEncontrada = archivo;
+                                if (coincideSku || coincideTitulo) {
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (imagenEncontrada != null && imagenEncontrada.exists()) {
+                    imagen = new Image(imagenEncontrada.toURI().toString());
+                }
+            }
+
+            // 3. Establecer la imagen final o la predeterminada
+            if (imagen != null && !imagen.isError()) {
+                imgPortada.setImage(imagen);
+            } else {
+                cargarImagenPorDefecto();
+            }
+
+        } catch (Exception e) {
+            cargarImagenPorDefecto();
+        }
+    }
+
+    private void cargarImagenPorDefecto() {
+        try {
+            InputStream is = getClass().getResourceAsStream("/org/ibm/images/default_vinilo.png");
+            if (is != null) {
+                imgPortada.setImage(new Image(is));
+            } else {
+                imgPortada.setImage(null);
+            }
+        } catch (Exception e) {
+            imgPortada.setImage(null);
+        }
     }
  
     @FXML
@@ -336,6 +441,7 @@ public class ViniloController implements Initializable {
             mostrarError("Error al guardar: " + e.getMessage());
         }
     }
+    
     @FXML
     private void handleVolver(ActionEvent evento) {
         try {

@@ -38,10 +38,7 @@
                 
                 <HBox spacing="10.0">
                     <children>
-                        <!-- AQUÍ SE AGREGÓ EL onAction="#handleGuardar" -->
                         <Button fx:id="btnGuardar" disable="true" onAction="#handleGuardar" prefHeight="36.0" prefWidth="135.0" style="-fx-font-family: 'Century Gothic'; -fx-background-color: #2D6A4F; -fx-text-fill: white; -fx-background-radius: 6; -fx-cursor: hand; -fx-font-weight: bold;" text="Guardar" />
-                        
-                        <!-- AQUÍ SE AGREGÓ EL onAction="#handleCancelar" -->
                         <Button fx:id="btnCancelar" disable="true" onAction="#handleCancelar" prefHeight="36.0" prefWidth="135.0" style="-fx-font-family: 'Century Gothic'; -fx-background-color: #FFFFFF; -fx-text-fill: #2D6A4F; -fx-border-color: #2D6A4F; -fx-border-radius: 6; -fx-background-radius: 6; -fx-cursor: hand;" text="Cancelar" />
                     </children>
                 </HBox>
