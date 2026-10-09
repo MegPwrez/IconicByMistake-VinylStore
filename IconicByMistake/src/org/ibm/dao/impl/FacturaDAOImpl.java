@@ -39,15 +39,14 @@ public class FacturaDAOImpl implements FacturaDAO {
                         facturaActual.setGranTotal(rs.getDouble("gran_total"));
                     }
 
-                    // Se construye cada ítem de detalle (vinilo)
                     DetalleVenta detalle = new DetalleVenta();
-                    detalle.setCodigoBarras(rs.getString("codigo_barras"));
-                    detalle.setTituloAlbum(rs.getString("titulo_album"));
+                    detalle.setCodigoBarras(rs.getString("codigo_vinilo"));
+                    detalle.setTituloAlbum(rs.getString("descripcion_album"));
                     detalle.setCantidad(rs.getInt("cantidad"));
                     detalle.setPrecioUnitario(rs.getDouble("precio_unitario"));
-                    detalle.setSubTotal(rs.getDouble("subtotal"));
+                    detalle.setSubTotal(rs.getDouble("subtotal_item"));
 
-                    facturaActual.agregarDetalle(detalle);
+                    facturaActual.agregarDetalle(detalle);  
                 }
 
                 if (facturaActual != null) {

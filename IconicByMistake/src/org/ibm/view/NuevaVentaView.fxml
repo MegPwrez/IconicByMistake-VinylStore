@@ -8,6 +8,7 @@
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -35,6 +36,11 @@
                <children>
                   <Label style="-fx-text-fill: #386646; -fx-font-size: 12px; -fx-font-weight: bold;" text="Vinilo" />
                   <ComboBox fx:id="cmbVinilo" maxWidth="1.7976931348623157E308" prefHeight="38.0" promptText="Seleccione un vinilo" style="-fx-background-color: #F0F5F3; -fx-background-radius: 6; -fx-border-color: #9BBABA; -fx-border-radius: 6;" />
+               </children>
+            </VBox>
+            <VBox alignment="CENTER" spacing="4.0" style="-fx-background-color: #F0F5F3; -fx-background-radius: 8; -fx-padding: 8; -fx-border-color: #9BBABA; -fx-border-radius: 8;">
+               <children>
+                  <ImageView fx:id="imgVinilo" fitHeight="140.0" fitWidth="140.0" pickOnBounds="true" preserveRatio="true" />
                </children>
             </VBox>
             <HBox alignment="BOTTOM_LEFT" spacing="10.0">
@@ -76,12 +82,9 @@
                   <TableColumn fx:id="colCodigoBarras" prefWidth="120.0" text="Código de Barras" />
                   <TableColumn fx:id="colTitulo" prefWidth="220.0" text="Título" />
                   <TableColumn fx:id="colPrecio" prefWidth="100.0" text="Precio" />
-                  <TableColumn fx:id="colCantidad" prefWidth="90.0" text="Cantidad" />
+                  <TableColumn fx:id="colCantidad" prefWidth="90.0" text="cantidad" />
                   <TableColumn fx:id="colsubtotal" prefWidth="110.0" text="Subtotal" />
                </columns>
-               <columnResizePolicy>
-                  <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-               </columnResizePolicy>
             </TableView>
             <HBox spacing="10.0">
                <children>

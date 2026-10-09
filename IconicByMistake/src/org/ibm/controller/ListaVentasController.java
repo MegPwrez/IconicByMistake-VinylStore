@@ -355,8 +355,7 @@ public class ListaVentasController implements Initializable {
             mostrarError("Error al volver al menú: " + e.getMessage());
         }
     }
-
-    @FXML
+@FXML
     private void handleFactura(ActionEvent event) {
         Venta seleccion = tablaVentas.getSelectionModel().getSelectedItem();
         if (seleccion == null) {

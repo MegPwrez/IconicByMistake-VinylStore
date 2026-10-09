@@ -13,14 +13,14 @@ import org.ibm.utils.Conexion;
 public class VentaService {
 
     public boolean validarStock(String codigoBarras, int cantidad) {
-        String sql = "{call sp_buscarvinilo(?)}";
+        String sql = "{call sp_buscarlinilo(?)}";
         try (Connection con = Conexion.getInstancia().conectar();
              CallableStatement cs = con.prepareCall(sql)) {
 
             cs.setString(1, codigoBarras);
             try (ResultSet rs = cs.executeQuery()) {
                 if (rs.next()) {
-                    int stockActual = rs.getInt("stock");
+                    int stockActual = rs.getInt("stock_actual");
                     return stockActual >= cantidad;
                 }
             }

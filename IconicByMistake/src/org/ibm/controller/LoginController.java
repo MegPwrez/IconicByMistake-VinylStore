@@ -126,7 +126,7 @@ public class LoginController {
             case "cajero":
 
                 fxmlPath =
-                        "/org/ibm/view/DashboardCajeroView.fxml";
+                        "/org/ibm/view/CajeroDashboardView.fxml";
 
                 tituloVentana =
                         "Iconic By Mistake - Panel de Caja";
