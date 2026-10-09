@@ -1,9 +1,12 @@
 package org.ibm.controller;
 
 import java.io.File;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -13,19 +16,23 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.util.StringConverter;
+
 import org.ibm.Main;
 import org.ibm.Ventaservice.VentaService;
 import org.ibm.dao.ClienteDAO;
 import org.ibm.dao.ViniloDAO;
 import org.ibm.dao.impl.ClienteDAOImpl;
+import org.ibm.dao.impl.UsuarioDAOImpl;
 import org.ibm.dao.impl.ViniloDAOImpl;
 import org.ibm.exception.ValidacionException;
 import org.ibm.model.Cliente;
@@ -37,29 +44,44 @@ import org.ibm.utils.SesionUsuario;
 
 public class NuevaVentaController implements Initializable {
 
-    private static final Logger log = Logger.getLogger(NuevaVentaController.class.getName());
+    private static final Logger log =
+            Logger.getLogger(NuevaVentaController.class.getName());
 
     @FXML private ComboBox<Cliente> cmbCliente;
     @FXML private ComboBox<Vinilo> cmbVinilo;
     @FXML private ImageView imgVinilo;
     @FXML private Spinner<Integer> spCantidad;
+
     @FXML private Button btnAgregar;
     @FXML private Button btnRegistrar;
     @FXML private Button btnQuitar;
     @FXML private Button btnVaciar;
+
     @FXML private TableView<DetalleVenta> tablaLineas;
     @FXML private TableColumn<DetalleVenta, String> colCodigoBarras;
     @FXML private TableColumn<DetalleVenta, String> colTitulo;
     @FXML private TableColumn<DetalleVenta, Double> colPrecio;
     @FXML private TableColumn<DetalleVenta, Integer> colCantidad;
     @FXML private TableColumn<DetalleVenta, Double> colsubtotal;
+
+    @FXML private TextField txtPorcentajeDescuento;
+    @FXML private TextField txtUsuarioAdmin;
+    @FXML private PasswordField txtContrasenaAdmin;
+
+    @FXML private Label lblSubtotal;
+    @FXML private Label lblDescuento;
     @FXML private Label lblTotal;
     @FXML private Label lblMensaje;
 
     private final ClienteDAO clienteDAO = new ClienteDAOImpl();
     private final ViniloDAO viniloDAO = new ViniloDAOImpl();
+    private final UsuarioDAOImpl usuarioDAO = new UsuarioDAOImpl();
     private final VentaService ventaService = new VentaService();
-    private final ObservableList<DetalleVenta> lineasVenta = FXCollections.observableArrayList();
+
+    private final ObservableList<DetalleVenta> lineasVenta =
+            FXCollections.observableArrayList();
+
+    private static final BigDecimal CIEN = new BigDecimal("100");
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -67,22 +89,32 @@ public class NuevaVentaController implements Initializable {
         tablaLineas.setItems(lineasVenta);
         configurarTabla();
         configurarSpinner();
-        calcularTotal();
 
-        cmbVinilo.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            mostrarImagenVinilo(newValue);
-        });
+        txtPorcentajeDescuento.textProperty().addListener(
+                (observable, anterior, nuevo) -> actualizarTotales()
+        );
 
+        cmbVinilo.getSelectionModel().selectedItemProperty().addListener(
+                (observable, anterior, nuevo) -> mostrarImagenVinilo(nuevo)
+        );
+
+        actualizarTotales();
         cargarImagenPorDefecto();
     }
 
     private void cargarCombos() {
         try {
-            cmbCliente.setItems(FXCollections.observableArrayList(clienteDAO.listar()));
+            cmbCliente.setItems(
+                    FXCollections.observableArrayList(clienteDAO.listar())
+            );
+
             cmbCliente.setConverter(new StringConverter<Cliente>() {
                 @Override
                 public String toString(Cliente cliente) {
-                    return cliente == null ? "" : cliente.getCui() + " - " + cliente.getNombreCliente() + " " + cliente.getApellidoCliente();
+                    return cliente == null ? ""
+                            : cliente.getCui() + " - "
+                            + cliente.getNombreCliente() + " "
+                            + cliente.getApellidoCliente();
                 }
 
                 @Override
@@ -91,11 +123,16 @@ public class NuevaVentaController implements Initializable {
                 }
             });
 
-            cmbVinilo.setItems(FXCollections.observableArrayList(viniloDAO.listarTodos()));
+            cmbVinilo.setItems(
+                    FXCollections.observableArrayList(viniloDAO.listarTodos())
+            );
+
             cmbVinilo.setConverter(new StringConverter<Vinilo>() {
                 @Override
                 public String toString(Vinilo vinilo) {
-                    return vinilo == null ? "" : vinilo.getCodigoBarras() + " - " + vinilo.getTituloAlbum();
+                    return vinilo == null ? ""
+                            : vinilo.getCodigoBarras() + " - "
+                            + vinilo.getTituloAlbum();
                 }
 
                 @Override
@@ -103,31 +140,170 @@ public class NuevaVentaController implements Initializable {
                     return null;
                 }
             });
+
         } catch (Exception e) {
             mostrarError("Error al cargar combos: " + e.getMessage());
         }
     }
 
     private void configurarTabla() {
-        colCodigoBarras.setCellValueFactory(new PropertyValueFactory<>("codigoBarras"));
-        colTitulo.setCellValueFactory(new PropertyValueFactory<>("tituloAlbum"));
-        colPrecio.setCellValueFactory(new PropertyValueFactory<>("precioUnitario"));
-        colCantidad.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
-        colsubtotal.setCellValueFactory(new PropertyValueFactory<>("subTotal"));
+        colCodigoBarras.setCellValueFactory(
+                new PropertyValueFactory<>("codigoBarras")
+        );
+
+        colTitulo.setCellValueFactory(
+                new PropertyValueFactory<>("tituloAlbum")
+        );
+
+        colPrecio.setCellValueFactory(
+                new PropertyValueFactory<>("precioUnitario")
+        );
+
+        colCantidad.setCellValueFactory(
+                new PropertyValueFactory<>("cantidad")
+        );
+
+        colsubtotal.setCellValueFactory(
+                new PropertyValueFactory<>("subTotal")
+        );
     }
 
     private void configurarSpinner() {
-        spCantidad.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 999, 1));
+        spCantidad.setValueFactory(
+                new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 999, 1)
+        );
     }
 
-    private double calcularTotal() {
-        double total = 0;
-        for (DetalleVenta linea : lineasVenta) {
-            total += linea.getSubTotal();
-        }
-        lblTotal.setText(String.format("Total: Q%.2f", total));
-        return total;
+    // DESCUENTOS Y TOTALES
+
+    private BigDecimal redondear(BigDecimal valor) {
+        return valor.setScale(2, RoundingMode.HALF_UP);
     }
+
+    private BigDecimal calcularSubtotal() {
+        BigDecimal subtotal = BigDecimal.ZERO;
+
+        for (DetalleVenta linea : lineasVenta) {
+            subtotal = subtotal.add(
+                    BigDecimal.valueOf(linea.getSubTotal())
+            );
+        }
+
+        return redondear(subtotal);
+    }
+
+    private BigDecimal obtenerPorcentajeDescuento()
+            throws ValidacionException {
+
+        String texto = txtPorcentajeDescuento.getText();
+
+        if (texto == null || texto.trim().isEmpty()) {
+            return BigDecimal.ZERO;
+        }
+
+        try {
+            BigDecimal porcentaje = new BigDecimal(
+                    texto.trim().replace(",", ".")
+            );
+
+            if (porcentaje.compareTo(BigDecimal.ZERO) < 0
+                    || porcentaje.compareTo(CIEN) > 0) {
+                throw new ValidacionException(
+                        "El descuento debe estar entre 0% y 100%."
+                );
+            }
+
+            return porcentaje;
+
+        } catch (NumberFormatException e) {
+            throw new ValidacionException(
+                    "Ingrese un porcentaje de descuento válido."
+            );
+        }
+    }
+
+    private BigDecimal calcularMontoDescuento(
+            BigDecimal subtotal,
+            BigDecimal porcentaje) {
+
+        return redondear(
+                subtotal.multiply(porcentaje)
+                        .divide(CIEN, 4, RoundingMode.HALF_UP)
+        );
+    }
+
+    private void actualizarTotales() {
+        BigDecimal subtotal = calcularSubtotal();
+
+        lblSubtotal.setText(
+                String.format("Subtotal: Q%.2f", subtotal)
+        );
+
+        try {
+            BigDecimal porcentaje = obtenerPorcentajeDescuento();
+
+            BigDecimal descuento =
+                    calcularMontoDescuento(subtotal, porcentaje);
+
+            BigDecimal total = subtotal.subtract(descuento);
+
+            lblDescuento.setText(
+                    String.format("Descuento: Q%.2f", descuento)
+            );
+
+            lblTotal.setText(
+                    String.format("Total: Q%.2f", total)
+            );
+
+            lblMensaje.setText("");
+
+        } catch (ValidacionException e) {
+            lblDescuento.setText("Descuento: inválido");
+            lblTotal.setText("Total: pendiente");
+            lblMensaje.setText(e.getMessage());
+        }
+    }
+
+    private Usuario validarAdministrador()
+            throws ValidacionException {
+
+        String nombreUsuario = txtUsuarioAdmin.getText();
+        String contrasena = txtContrasenaAdmin.getText();
+
+        if (nombreUsuario == null || nombreUsuario.trim().isEmpty()
+                || contrasena == null || contrasena.isEmpty()) {
+
+            throw new ValidacionException(
+                    "Ingrese usuario y contraseña de un administrador."
+            );
+        }
+
+        Usuario administrador = usuarioDAO.autenticar(
+                nombreUsuario.trim(), contrasena
+        );
+
+        if (administrador == null) {
+            throw new ValidacionException(
+                    "Las credenciales del administrador son incorrectas."
+            );
+        }
+
+        if (!"admin".equalsIgnoreCase(administrador.getRol())) {
+            throw new ValidacionException(
+                    "El usuario indicado no tiene permisos de administrador."
+            );
+        }
+
+        if (!administrador.isEstado()) {
+            throw new ValidacionException(
+                    "La cuenta del administrador está desactivada."
+            );
+        }
+
+        return administrador;
+    }
+
+    // IMÁGENES DE VINILOS
 
     private void mostrarImagenVinilo(Vinilo vinilo) {
         if (vinilo == null) {
@@ -136,65 +312,135 @@ public class NuevaVentaController implements Initializable {
         }
 
         Image imagen = null;
+
         try {
-            if (vinilo.getUrlFoto() != null && !vinilo.getUrlFoto().trim().isEmpty()) {
+            if (vinilo.getUrlFoto() != null
+                    && !vinilo.getUrlFoto().trim().isEmpty()) {
+
                 String rutaFoto = vinilo.getUrlFoto().trim();
                 File archivoDirecto = new File(rutaFoto);
-                
+
                 if (archivoDirecto.exists()) {
                     imagen = new Image(archivoDirecto.toURI().toString());
+
                 } else {
-                    File archivoRelativo = new File(System.getProperty("user.dir"), rutaFoto);
+                    File archivoRelativo = new File(
+                            System.getProperty("user.dir"), rutaFoto
+                    );
+
                     if (archivoRelativo.exists()) {
-                        imagen = new Image(archivoRelativo.toURI().toString());
+                        imagen = new Image(
+                                archivoRelativo.toURI().toString()
+                        );
+
                     } else {
-                        File carpetaGeneral = new File("C:/Gabriel_Escobedo/imagenes");
+                        File carpetaGeneral = new File("C:/Ge/imagenes");
+
                         if (!carpetaGeneral.exists()) {
-                            carpetaGeneral = new File(System.getProperty("user.dir"), "imagenes");
+                            carpetaGeneral = new File(
+                                    System.getProperty("user.dir"),
+                                    "imagenes"
+                            );
                         }
-                        File archivoEnCarpeta = new File(carpetaGeneral, rutaFoto);
+
+                        File archivoEnCarpeta =
+                                new File(carpetaGeneral, rutaFoto);
+
                         if (archivoEnCarpeta.exists()) {
-                            imagen = new Image(archivoEnCarpeta.toURI().toString());
+                            imagen = new Image(
+                                    archivoEnCarpeta.toURI().toString()
+                            );
                         }
                     }
                 }
             }
 
             if (imagen == null || imagen.isError()) {
-                String skuBusqueda = vinilo.getCodigoBarras() != null ? vinilo.getCodigoBarras().trim().toLowerCase().replaceAll("[^a-z0-9]", "") : "";
-                String tituloBusqueda = vinilo.getTituloAlbum() != null ? vinilo.getTituloAlbum().trim().toLowerCase().replaceAll("[^a-z0-9]", "") : "";
-                
+                String skuBusqueda = vinilo.getCodigoBarras() != null
+                        ? vinilo.getCodigoBarras().trim()
+                                .toLowerCase().replaceAll("[^a-z0-9]", "")
+                        : "";
+
+                String tituloBusqueda = vinilo.getTituloAlbum() != null
+                        ? vinilo.getTituloAlbum().trim()
+                                .toLowerCase().replaceAll("[^a-z0-9]", "")
+                        : "";
+
                 String palabraClaveTitulo = "";
-                if (vinilo.getTituloAlbum() != null && !vinilo.getTituloAlbum().trim().isEmpty()) {
-                    String[] palabras = vinilo.getTituloAlbum().trim().toLowerCase().split("[^a-z0-9]+");
+
+                if (vinilo.getTituloAlbum() != null
+                        && !vinilo.getTituloAlbum().trim().isEmpty()) {
+
+                    String[] palabras = vinilo.getTituloAlbum()
+                            .trim().toLowerCase().split("[^a-z0-9]+");
+
                     for (String p : palabras) {
-                        if (p.length() > 2 && !p.equals("the") && !p.equals("and") && !p.equals("for")) {
+                        if (p.length() > 2
+                                && !p.equals("the")
+                                && !p.equals("and")
+                                && !p.equals("for")) {
+
                             palabraClaveTitulo = p;
                             break;
                         }
                     }
                 }
 
-                File carpetaImagenes = new File("C:/Gabriel_Escobedo/imagenes");
+                File carpetaImagenes = new File("C:/Ge/imagenes");
+
                 if (!carpetaImagenes.exists()) {
-                    carpetaImagenes = new File(System.getProperty("user.dir"), "imagenes");
+                    carpetaImagenes = new File(
+                            System.getProperty("user.dir"), "imagenes"
+                    );
                 }
 
                 File imagenEncontrada = null;
-                if (carpetaImagenes.exists() && carpetaImagenes.isDirectory()) {
+
+                if (carpetaImagenes.exists()
+                        && carpetaImagenes.isDirectory()) {
+
                     File[] archivos = carpetaImagenes.listFiles();
+
                     if (archivos != null) {
                         for (File archivo : archivos) {
-                            String nombreCompleto = archivo.getName().toLowerCase();
-                            String nombreSinExt = nombreCompleto.contains(".") ? nombreCompleto.substring(0, nombreCompleto.lastIndexOf('.')) : nombreCompleto;
-                            String nombreArchivoLimpio = nombreSinExt.replaceAll("[^a-z0-9]", "");
-                            
-                            boolean coincideSku = !skuBusqueda.isEmpty() && nombreArchivoLimpio.contains(skuBusqueda);
-                            boolean coincideTitulo = !tituloBusqueda.isEmpty() && (nombreArchivoLimpio.contains(tituloBusqueda) || tituloBusqueda.contains(nombreArchivoLimpio));
-                            boolean coincidePalabra = !palabraClaveTitulo.isEmpty() && nombreArchivoLimpio.contains(palabraClaveTitulo);
+                            String nombreCompleto =
+                                    archivo.getName().toLowerCase();
 
-                            if (coincideSku || coincideTitulo || coincidePalabra) {
+                            String nombreSinExt = nombreCompleto.contains(".")
+                                    ? nombreCompleto.substring(
+                                            0,
+                                            nombreCompleto.lastIndexOf('.')
+                                    )
+                                    : nombreCompleto;
+
+                            String nombreArchivoLimpio =
+                                    nombreSinExt.replaceAll("[^a-z0-9]", "");
+
+                            boolean coincideSku =
+                                    !skuBusqueda.isEmpty()
+                                    && nombreArchivoLimpio.contains(
+                                            skuBusqueda
+                                    );
+
+                            boolean coincideTitulo =
+                                    !tituloBusqueda.isEmpty()
+                                    && (nombreArchivoLimpio.contains(
+                                            tituloBusqueda
+                                    ) || tituloBusqueda.contains(
+                                            nombreArchivoLimpio
+                                    ));
+
+                            boolean coincidePalabra =
+                                    !palabraClaveTitulo.isEmpty()
+                                    && nombreArchivoLimpio.contains(
+                                            palabraClaveTitulo
+                                    );
+
+                            if (coincideSku || coincideTitulo
+                                    || coincidePalabra) {
+
                                 imagenEncontrada = archivo;
+
                                 if (coincideSku || coincideTitulo) {
                                     break;
                                 }
@@ -203,84 +449,121 @@ public class NuevaVentaController implements Initializable {
                     }
                 }
 
-                if (imagenEncontrada != null && imagenEncontrada.exists()) {
-                    imagen = new Image(imagenEncontrada.toURI().toString());
+                if (imagenEncontrada != null
+                        && imagenEncontrada.exists()) {
+
+                    imagen = new Image(
+                            imagenEncontrada.toURI().toString()
+                    );
                 }
             }
 
             if (imagen != null && !imagen.isError()) {
-                if (imgVinilo != null) {
-                    imgVinilo.setImage(imagen);
-                }
+                imgVinilo.setImage(imagen);
+
             } else {
-                System.out.println("⚠️ No se encontró imagen para el vinilo: " + vinilo.getTituloAlbum() + " (Código: " + vinilo.getCodigoBarras() + ")");
+                System.out.println(
+                        "No se encontró imagen para el vinilo: "
+                        + vinilo.getTituloAlbum()
+                );
                 cargarImagenPorDefecto();
             }
 
         } catch (Exception e) {
-            System.err.println("❌ Error al procesar la imagen del vinilo [" + vinilo.getTituloAlbum() + "]: " + e.getMessage());
+            System.err.println(
+                    "Error al procesar la imagen: " + e.getMessage()
+            );
             cargarImagenPorDefecto();
         }
     }
 
     private void cargarImagenPorDefecto() {
-        if (imgVinilo == null) return;
+        if (imgVinilo == null) {
+            return;
+        }
+
         try {
-            URL defaultUrl = getClass().getResource("/org/ibm/assets/default_album.png");
+            URL defaultUrl = getClass().getResource(
+                    "/org/ibm/assets/default_album.png"
+            );
+
             if (defaultUrl != null) {
-                imgVinilo.setImage(new Image(defaultUrl.toExternalForm()));
+                imgVinilo.setImage(
+                        new Image(defaultUrl.toExternalForm())
+                );
             } else {
                 imgVinilo.setImage(null);
             }
+
         } catch (Exception e) {
             imgVinilo.setImage(null);
         }
     }
 
+    // CARRITO DE VENTAS
+
     @FXML
     private void handleAgregarLinea() {
         Vinilo vinilo = cmbVinilo.getValue();
+
         if (vinilo == null) {
-            mostrarAdvertencia("Seleccione un vinilo para agregar a la venta.");
+            mostrarAdvertencia(
+                    "Seleccione un vinilo para agregar a la venta."
+            );
             return;
         }
+
         int cantidadNueva = spCantidad.getValue();
         int cantidadAcumulada = 0;
-
         DetalleVenta itemExistente = null;
+
         for (DetalleVenta item : lineasVenta) {
-            if (item.getCodigoBarras().equals(vinilo.getCodigoBarras())) {
+            if (item.getCodigoBarras().equals(
+                    vinilo.getCodigoBarras())) {
+
                 itemExistente = item;
                 cantidadAcumulada = item.getCantidad();
                 break;
             }
         }
-        if (vinilo.getStockActual() < (cantidadAcumulada + cantidadNueva)) {
-            mostrarAdvertencia("Stock insuficiente. Disponible: " + vinilo.getStockActual() + ".");
+
+        if (vinilo.getStockActual()
+                < cantidadAcumulada + cantidadNueva) {
+
+            mostrarAdvertencia(
+                    "Stock insuficiente. Disponible: "
+                    + vinilo.getStockActual() + "."
+            );
             return;
         }
-        
+
         if (itemExistente != null) {
             lineasVenta.remove(itemExistente);
-            int nuevaCantidadTotal = cantidadAcumulada + cantidadNueva;
+
+            int nuevaCantidadTotal =
+                    cantidadAcumulada + cantidadNueva;
+
             DetalleVenta itemActualizado = new DetalleVenta(
-                vinilo.getCodigoBarras(),
-                vinilo.getTituloAlbum(),
-                vinilo.getPrecio(),
-                nuevaCantidadTotal
+                    vinilo.getCodigoBarras(),
+                    vinilo.getTituloAlbum(),
+                    vinilo.getPrecio(),
+                    nuevaCantidadTotal
             );
+
             lineasVenta.add(itemActualizado);
+
         } else {
             DetalleVenta nuevoItem = new DetalleVenta(
-                vinilo.getCodigoBarras(),
-                vinilo.getTituloAlbum(),
-                vinilo.getPrecio(),
-                cantidadNueva
+                    vinilo.getCodigoBarras(),
+                    vinilo.getTituloAlbum(),
+                    vinilo.getPrecio(),
+                    cantidadNueva
             );
+
             lineasVenta.add(nuevoItem);
         }
 
-        calcularTotal();
+        actualizarTotales();
         lblMensaje.setText("");
         cmbVinilo.setValue(null);
         spCantidad.getValueFactory().setValue(1);
@@ -288,80 +571,132 @@ public class NuevaVentaController implements Initializable {
 
     @FXML
     private void handleQuitarLinea() {
-        DetalleVenta seleccion = tablaLineas.getSelectionModel().getSelectedItem();
+        DetalleVenta seleccion =
+                tablaLineas.getSelectionModel().getSelectedItem();
+
         if (seleccion == null) {
-            mostrarAdvertencia("Seleccione una línea de la tabla para quitar.");
+            mostrarAdvertencia(
+                    "Seleccione una línea de la tabla para quitar."
+            );
             return;
         }
+
         lineasVenta.remove(seleccion);
-        calcularTotal();
+        actualizarTotales();
     }
 
     @FXML
     private void handleVaciar() {
         lineasVenta.clear();
-        calcularTotal();
+        actualizarTotales();
         lblMensaje.setText("");
     }
+
+    // REGISTRO DE VENTAS
 
     @FXML
     private void handleRegistrarVenta() {
         try {
-            Usuario usuarioActual = SesionUsuario.getInstancia().getUsuarioActual();
+            Usuario usuarioActual =
+                    SesionUsuario.getInstancia().getUsuarioActual();
+
             if (usuarioActual == null) {
-                throw new ValidacionException("No hay una sesión de usuario activa. Inicie sesión nuevamente.");
-            }
-            if (cmbCliente.getValue() == null) {
-                throw new ValidacionException("Seleccione el cliente de la venta.");
-            }
-            if (lineasVenta.isEmpty()) {
-                throw new ValidacionException("Agregue al menos un vinilo a la venta.");
+                throw new ValidacionException(
+                        "No hay una sesión activa. Inicie sesión nuevamente."
+                );
             }
 
-            int idUsuario = usuarioActual.getIdUsuario();
-            long cuiCliente = cmbCliente.getValue().getCui();
-            double totalCalculado = calcularTotal();
+            if (cmbCliente.getValue() == null) {
+                throw new ValidacionException(
+                        "Seleccione el cliente de la venta."
+                );
+            }
+
+            if (lineasVenta.isEmpty()) {
+                throw new ValidacionException(
+                        "Agregue al menos un vinilo a la venta."
+                );
+            }
+
+            BigDecimal subtotal = calcularSubtotal();
+            BigDecimal porcentaje = obtenerPorcentajeDescuento();
+
+            BigDecimal descuento =
+                    calcularMontoDescuento(subtotal, porcentaje);
+
+            BigDecimal total = subtotal.subtract(descuento);
+
+            if (porcentaje.compareTo(BigDecimal.ZERO) > 0) {
+                validarAdministrador();
+            }
 
             Venta nuevaVenta = new Venta();
-            nuevaVenta.setSubTotal(String.valueOf(totalCalculado));
-            nuevaVenta.setDescuento(0.00);
-            nuevaVenta.setTotalVenta(totalCalculado);
-            nuevaVenta.setCuiCliente(cuiCliente);
-            nuevaVenta.setId_usuario(idUsuario);
 
-            boolean exito = ventaService.procesarVenta(nuevaVenta, lineasVenta);
+            nuevaVenta.setSubTotal(subtotal.toPlainString());
+            nuevaVenta.setDescuento(descuento.doubleValue());
+            nuevaVenta.setTotalVenta(total.doubleValue());
+            nuevaVenta.setCuiCliente(cmbCliente.getValue().getCui());
+            nuevaVenta.setId_usuario(usuarioActual.getIdUsuario());
+
+            boolean exito = ventaService.procesarVenta(
+                    nuevaVenta, lineasVenta
+            );
+
             if (!exito) {
-                mostrarError("No se pudo registrar la venta. Verifique el stock.");
+                mostrarError(
+                        "No se pudo registrar la venta. Verifique el stock."
+                );
                 return;
             }
-            FacturaController.setNoVentaSeleccionada(nuevaVenta.getIdVenta());
-            Main.cambiarVista("/org/ibm/view/FacturaView.fxml");
+
+            txtContrasenaAdmin.clear();
+
+            FacturaController.setNoVentaSeleccionada(
+                    nuevaVenta.getIdVenta()
+            );
+
+            Main.cambiarVista(
+                    "/org/ibm/view/FacturaView.fxml"
+            );
 
         } catch (ValidacionException e) {
             mostrarAdvertencia(e.getMessage());
             lblMensaje.setText(e.getMessage());
+
         } catch (Exception e) {
-            mostrarError("Error al registrar la venta: " + e.getMessage());
+            mostrarError(
+                    "Error al registrar la venta: " + e.getMessage()
+            );
         }
     }
-
     private void limpiarVenta() {
         lineasVenta.clear();
         cmbCliente.setValue(null);
         cmbVinilo.setValue(null);
         spCantidad.getValueFactory().setValue(1);
-        calcularTotal();
+
+        txtPorcentajeDescuento.setText("0");
+        txtUsuarioAdmin.clear();
+        txtContrasenaAdmin.clear();
+
+        actualizarTotales();
     }
 
     @FXML
     public void handleVolver(ActionEvent event) {
+        txtContrasenaAdmin.clear();
+
         try {
-            Main.cambiarVista("/org/ibm/view/CajeroDashboardView.fxml");
+            Main.cambiarVista(
+                    "/org/ibm/view/CajeroDashboardView.fxml"
+            );
+
         } catch (Exception e) {
-            mostrarError("Error al volver al menú: " + e.getMessage());
+            mostrarError(
+                    "Error al volver al menú: " + e.getMessage()
+            );
         }
     }
-
     private void mostrarError(String mensaje) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error");
