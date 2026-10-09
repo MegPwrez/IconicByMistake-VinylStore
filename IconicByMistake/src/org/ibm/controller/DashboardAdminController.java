@@ -128,7 +128,7 @@ public class DashboardAdminController implements Initializable {
 
        cambiarVista(
                 "/org/ibm/view/CatalogoView.fxml",
-                "Iconic By Mistake - Cambiar contraseña"
+                "Iconic By Mistake - Catálogo"
         );
     }
 

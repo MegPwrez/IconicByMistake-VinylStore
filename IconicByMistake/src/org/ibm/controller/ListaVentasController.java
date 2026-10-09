@@ -45,6 +45,7 @@ import org.ibm.model.Cliente;
 import org.ibm.model.Usuario;
 import org.ibm.model.Venta;
 import org.ibm.utils.ControlAcceso;
+import org.ibm.utils.SesionUsuario;
 
 public class ListaVentasController implements Initializable {
 
@@ -81,7 +82,7 @@ public class ListaVentasController implements Initializable {
     private final VentaDAO ventaDAO = new VentaDAOImpl();
     private final ClienteDAO clienteDAO = new ClienteDAOImpl();
     private final UsuarioDAO usuarioDAO = new UsuarioDAOImpl();
-    
+
     private final ObservableList<Venta> listaVentas = FXCollections.observableArrayList();
     private final FilteredList<Venta> ventasFiltradas = new FilteredList<>(listaVentas, p -> true);
 
@@ -92,7 +93,7 @@ public class ListaVentasController implements Initializable {
         cargarClientes();
         cargarUsuarios();
         cargarTabla();
-        
+
         tablaVentas.setItems(ventasFiltradas);
         seleccionarFila();
         configurarBusqueda();
@@ -178,7 +179,7 @@ public class ListaVentasController implements Initializable {
                 (obs, oldSelection, newSelection) -> {
                     if (newSelection != null) {
                         txtTotal.setText(String.valueOf(newSelection.getTotalVenta()));
-                        
+
                         cmbCliente.setValue(null);
                         for (Cliente cliente : cmbCliente.getItems()) {
                             if (cliente.getCui() == newSelection.getCuiCliente()) {
@@ -186,14 +187,14 @@ public class ListaVentasController implements Initializable {
                                 break;
                             }
                         }
-                        
+
                         Timestamp timestamp = newSelection.getFechaVenta();
                         if (timestamp != null) {
                             dpFecha.setValue(timestamp.toLocalDateTime().toLocalDate());
                         } else {
                             dpFecha.setValue(null);
                         }
-                        
+
                         cmbUsuario.setValue(null);
                         for (Usuario usuario : cmbUsuario.getItems()) {
                             if (usuario.getIdUsuario() == newSelection.getId_usuario()) {
@@ -201,7 +202,7 @@ public class ListaVentasController implements Initializable {
                                 break;
                             }
                         }
-                        
+
                         desactivarFormulario();
                     }
                 });
@@ -221,7 +222,7 @@ public class ListaVentasController implements Initializable {
 
             Venta venta = new Venta();
             venta.setIdVenta(modoEdicion ? enEdicion.getIdVenta() : 0);
-            
+
             if (dpFecha.getValue() != null) {
                 venta.setFechaVenta(Timestamp.valueOf(dpFecha.getValue().atStartOfDay()));
             } else {
@@ -350,7 +351,12 @@ public class ListaVentasController implements Initializable {
     @FXML
     private void handleVolver(ActionEvent event) {
         try {
-            Main.cambiarVista("/org/ibm/view/CajeroDashboardView.fxml");
+            Usuario usuario = SesionUsuario.getInstancia().getUsuarioActual();
+            String ruta = "/org/ibm/view/CajeroDashboardView.fxml";
+            if (usuario != null && "admin".equalsIgnoreCase(usuario.getRol())) {
+                ruta = "/org/ibm/view/DashboardAdminView.fxml";
+            }
+            Main.cambiarVista(ruta);
         } catch (Exception e) {
             mostrarError("Error al volver al menú: " + e.getMessage());
         }
