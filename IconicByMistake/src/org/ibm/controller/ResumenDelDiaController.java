@@ -75,7 +75,7 @@ public class ResumenDelDiaController implements Initializable {
     @FXML
     private void handleVolver() {
         try {
-            Main.cambiarEscena("/org/lsa/view/CajeroDashboardView.fxml"); 
+            Main.cambiarEscena("/org/ibm/view/CajeroDashboardView.fxml"); 
         } catch (Exception e) {
             mostrarError("Error al volver al menú: " + e.getMessage());
         }
